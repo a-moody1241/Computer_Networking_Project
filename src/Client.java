@@ -16,32 +16,54 @@ public class Client {
     public void Client() {}
 
     public void fileTransfer(){
+		System.out.println("in file transfer");
+
 		byte[] aByte = new byte[1];
-		int bytesRead;
-		try {
-			System.out.println("Starting file transfer on Client side...");
-			InputStream is = requestSocket.getInputStream();
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			FileOutputStream fos = new FileOutputStream(fileOutput);
-			BufferedOutputStream bos = new BufferedOutputStream(fos);
-			bytesRead = is.read(aByte, 0, aByte.length);
-			System.out.println("ll");
+    	int bytesRead;
+		System.out.println("in file transfer");
 
-			do{
-				baos.write(aByte);
-				bytesRead = is.read(aByte);
+    	InputStream is = null;
+    	try{
+    		is = requestSocket.getInputStream();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println("in file transfer");
 
-			} while (bytesRead != -1);
-			System.out.println("lol");
+    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		System.out.println("in file transfer");
 
-			bos.write(baos.toByteArray());
-			bos.flush();
-			System.out.println("lol");
-			bos.close();
-		}catch(IOException ex){}
-		System.out.println("Finishing file transfer on Client side...");
+    	if (is != null){
+			System.out.println("in file transfer");
 
+			FileOutputStream fos = null;
+    		BufferedOutputStream bos = null;
+    		try{
+				System.out.println("in file transfer");
+
+				fos = new FileOutputStream(fileOutput);
+				System.out.println("oeoe");
+
+				bos = new BufferedOutputStream(fos);
+				System.out.println("oeoe");
+
+				bytesRead = is.read(aByte, 0, aByte.length);
+				System.out.println("oeoe");
+    			do{
+    				baos.write(aByte);
+    				bytesRead = is.read(aByte);
+				} while (bytesRead != -1);
+				System.out.println("oifjoeifj");
+    			bos.write(baos.toByteArray());
+    			bos.flush();
+    			bos.close();
+
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
+
 
 	void run()
 	{
@@ -89,6 +111,7 @@ public class Client {
 			System.err.println("You are trying to connect to an unknown host!");
 		}
 		catch(IOException ioException){
+			System.out.println("Error: ");
 			ioException.printStackTrace();
 		}
 		finally{

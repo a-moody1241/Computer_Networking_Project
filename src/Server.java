@@ -44,37 +44,38 @@ public class Server {
 	    		this.no = no;
         	}
 
-        public void fileTransfer() {
-            try {
-				System.out.println("Starting file transfer on Server side...");
-				File myFile = new File(fileToSend);
-				byte[] mybytearray = new byte[(int) myFile.length()];
-				FileInputStream fis = null;
-				try {
-					fis = new FileInputStream(myFile);
-
-				} catch (FileNotFoundException ex) {
-					System.out.println("File not found");
-				}
-				BufferedOutputStream outToClient = new BufferedOutputStream(connection.getOutputStream());
-				BufferedInputStream bis = new BufferedInputStream(fis);
-				try {
-					System.out.println(".");
-					bis.read(mybytearray, 0, mybytearray.length);
-					outToClient.write(mybytearray, 0, mybytearray.length);
-					System.out.println("..");
-					outToClient.flush();
-					System.out.println("...");
-
-
-				} catch (IOException ex) {
+        public void fileTransfer(){
+        		System.out.println("in file transfer");
+        		BufferedOutputStream outToClient = null;
+        		FileInputStream fis = null;
+        		try{
+        			outToClient = new BufferedOutputStream(connection.getOutputStream());
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
 
-			} catch (IOException ioException) {
-				System.out.println("Disconnect with Client1 " + no);
-			}
-			System.out.println("Finishing file transfer on Server side...");
+        		if (outToClient != null){
+        			File file = new File(fileToSend);
+        			byte[] aByte = new byte[(int) file.length()];
+        			try {
+        				fis = new FileInputStream(file);
+					} catch (FileNotFoundException e) {
+						e.printStackTrace();
+					}
+        			BufferedInputStream bis = new BufferedInputStream(fis);
+        			try{
+        				bis.read(aByte, 0, aByte.length);
+        				outToClient.write(aByte, 0, aByte.length);
+        				outToClient.flush();
+        				outToClient.close();
+        				connection.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
 		}
+
+
         public void run() {
  		try{
 
@@ -98,6 +99,9 @@ public class Server {
 					//ADDED THIS
 					if (MESSAGE.equals("DOWNLOAD")){
 						fileTransfer();
+                        out = new ObjectOutputStream(connection.getOutputStream());
+                        out.flush();
+                        in = new ObjectInputStream(connection.getInputStream());
 					}
 					//DONE WITH ADDED SECTION
 					System.out.println("pop");
