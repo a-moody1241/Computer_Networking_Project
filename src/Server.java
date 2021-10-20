@@ -6,10 +6,13 @@ import java.util.*;
 
 public class Server {
 
-	private static final int sPort = 8000;   //The server will be listening on this port number
+	//add
+	private final static String fileToSend = "C:\\Users\\swimg\\IdeaProjects\\Computer Networking Project\\src\\peer_1001\\tree.jpg";
+	//added
 
+	private static final int sPort = 8001;   //The server will be listening on this port number
 	public static void main(String[] args) throws Exception {
-		System.out.println("The server is running."); 
+		System.out.println("The server is running.");
         	ServerSocket listener = new ServerSocket(sPort);
 		int clientNum = 1;
         	try {
@@ -41,8 +44,41 @@ public class Server {
 	    		this.no = no;
         	}
 
+        public void fileTransfer() {
+            try {
+				System.out.println("Starting file transfer on Server side...");
+				File myFile = new File(fileToSend);
+				byte[] mybytearray = new byte[(int) myFile.length()];
+				FileInputStream fis = null;
+				try {
+					fis = new FileInputStream(myFile);
+
+				} catch (FileNotFoundException ex) {
+					System.out.println("File not found");
+				}
+				BufferedOutputStream outToClient = new BufferedOutputStream(connection.getOutputStream());
+				BufferedInputStream bis = new BufferedInputStream(fis);
+				try {
+					System.out.println(".");
+					bis.read(mybytearray, 0, mybytearray.length);
+					outToClient.write(mybytearray, 0, mybytearray.length);
+					System.out.println("..");
+					outToClient.flush();
+					System.out.println("...");
+
+
+				} catch (IOException ex) {
+				}
+
+			} catch (IOException ioException) {
+				System.out.println("Disconnect with Client1 " + no);
+			}
+			System.out.println("Finishing file transfer on Server side...");
+		}
         public void run() {
  		try{
+
+
 			//initialize Input and Output streams
 			out = new ObjectOutputStream(connection.getOutputStream());
 			out.flush();
@@ -58,6 +94,14 @@ public class Server {
 					MESSAGE = message.toUpperCase();
 					//send MESSAGE back to the client
 					sendMessage(MESSAGE);
+
+					//ADDED THIS
+					if (MESSAGE.equals("DOWNLOAD")){
+						fileTransfer();
+					}
+					//DONE WITH ADDED SECTION
+					System.out.println("pop");
+
 				}
 			}
 			catch(ClassNotFoundException classnot){
@@ -65,17 +109,19 @@ public class Server {
 				}
 		}
 		catch(IOException ioException){
-			System.out.println("Disconnect with Client " + no);
+			System.out.println("Disconnect with Client2 " + no + " " + ioException);
+			ioException.printStackTrace();
 		}
 		finally{
 			//Close connections
 			try{
+			    System.out.println("ow");
 				in.close();
 				out.close();
 				connection.close();
 			}
 			catch(IOException ioException){
-				System.out.println("Disconnect with Client " + no);
+				System.out.println("Disconnect with Client3 " + no);
 			}
 		}
 	}

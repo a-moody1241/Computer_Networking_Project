@@ -11,19 +11,51 @@ public class Client {
 	String message;                //message send to the server
 	String MESSAGE;                //capitalized message read from the server
 
-	public void Client() {}
+    private final static String fileOutput = "C:\\Users\\swimg\\IdeaProjects\\Computer Networking Project\\src\\peer_1002\\testout.jpg";
+
+    public void Client() {}
+
+    public void fileTransfer(){
+		byte[] aByte = new byte[1];
+		int bytesRead;
+		try {
+			System.out.println("Starting file transfer on Client side...");
+			InputStream is = requestSocket.getInputStream();
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			FileOutputStream fos = new FileOutputStream(fileOutput);
+			BufferedOutputStream bos = new BufferedOutputStream(fos);
+			bytesRead = is.read(aByte, 0, aByte.length);
+			System.out.println("ll");
+
+			do{
+				baos.write(aByte);
+				bytesRead = is.read(aByte);
+
+			} while (bytesRead != -1);
+			System.out.println("lol");
+
+			bos.write(baos.toByteArray());
+			bos.flush();
+			System.out.println("lol");
+			bos.close();
+		}catch(IOException ex){}
+		System.out.println("Finishing file transfer on Client side...");
+
+	}
 
 	void run()
 	{
+
 		try{
 			//create a socket to connect to the server
-			requestSocket = new Socket("localhost", 8000);
-			System.out.println("Connected to localhost in port 8000");
+			requestSocket = new Socket("localhost", 8001);
+			System.out.println("Connected to localhost in port 8001");
 			//initialize inputStream and outputStream
+
 			out = new ObjectOutputStream(requestSocket.getOutputStream());
 			out.flush();
 			in = new ObjectInputStream(requestSocket.getInputStream());
-			
+
 			//get Input from standard input
 			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
 			while(true)
@@ -35,6 +67,14 @@ public class Client {
 				sendMessage(message);
 				//Receive the upperCase sentence from the server
 				MESSAGE = (String)in.readObject();
+
+				//ADDED THIS
+				if (MESSAGE.equals("DOWNLOAD")){
+					fileTransfer();
+				}
+				System.out.println("back on client");
+				//END OF ADDED SECTION
+
 				//show the message to the user
 				System.out.println("Receive message: " + MESSAGE);
 			}
@@ -56,6 +96,7 @@ public class Client {
 			try{
 				in.close();
 				out.close();
+				System.out.println("boom");
 				requestSocket.close();
 			}
 			catch(IOException ioException){
