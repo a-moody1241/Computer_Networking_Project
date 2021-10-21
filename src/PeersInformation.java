@@ -18,19 +18,20 @@ public class PeersInformation {
         boolean hasFile = true;
         while ((line = br.readLine()) != null) {
             line = line.trim();
-            if ( (line.length() == 0) ) { //todo (line.startsWith("#")) || is this necessary
+            if ((line.length() == 0)) { //todo (line.startsWith("#")) || is this necessary
                 continue;
             }
 
             String[] items = line.split("\\s+");
-            if (items.length != 4){
+            if (items.length != 4) {
                 throw new ParsingException(line);
             }
 
-            if(items[3].trim().equals("0")){
+            if (items[3].trim().equals("0")) {
                 hasFile = false;
             }
 
+            //peerID, address, port num, hasfile
             PeerInformation peer = new PeerInformation(items[0].trim(), items[1].trim(), items[2].trim(), hasFile);
 
             peerInfo.addElement(peer);

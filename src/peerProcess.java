@@ -3,6 +3,8 @@ public class peerProcess {
 
     public static void main(String[] args){
         CommonPeerProperties cpp = new CommonPeerProperties();
+        PeersInformation peersInformation = new PeersInformation();
+        peersInformation.read();
         cpp.read();
         String fileName = cpp.getFileName();
         int numberOfPreferredNeighbors = cpp.getNumberOfPreferredNeighbors();
@@ -12,6 +14,6 @@ public class peerProcess {
         int pieceSize = cpp.getPieceSize();
 
         int peerID = Integer.parseInt(args[0]);
-
+        PeerInformation
     }
 }
