@@ -15,6 +15,30 @@ public class Client {
 
     public void Client() {}
 
+    // Returns a handshake byte array
+		public byte[] createHandshake(int peerID) {
+      // Construct handshake header byte array
+      String headerString = "P2PFILESHARINGPROJ";
+      Charset charset = StandardCharsets.US_ASCII;
+      byte[] headerBytes = charset.encode(headerString).array();
+
+      // Construct peerID byte array
+      byte[] peerIDBytes = peerID.toByteArray;
+
+      // Concatenate handshake header and peerID byte strings into final handshake message
+      // There are 10 bytes of zero padding between header and peerID in final message.
+      byte[] handshake = new byte [32];
+      System.arraycopy(headerBytes, 0, handshake, 0, headerBytes.length);
+      System.arraycopy(peerIDBytes, 0, handshake, 27, peerIDBytes.length);
+      
+      return handshake;
+      /* 
+      *  TODO (dylan): I am going to move this function
+      *  into a new class called Handshake.java and add few more helper functions etc.
+      */
+
+		}
+
     public void fileTransfer(){
 		/*System.out.println("in file transfer");
 
