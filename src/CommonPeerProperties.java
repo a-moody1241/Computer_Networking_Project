@@ -46,25 +46,25 @@ public class CommonPeerProperties {
         }
     }
 
-    public static String getConfigFile() { return CONFIG_FILE; }
+    public  String getConfigFile() { return CONFIG_FILE; }
 
-    public static int getNumberOfPreferredNeighbors() { return numberOfPreferredNeighbors; }
-    public static void setNumberOfPreferredNeighbors(int numberOfPreferredNeighbors) { CommonPeerProperties.numberOfPreferredNeighbors = numberOfPreferredNeighbors; }
+    public  int getNumberOfPreferredNeighbors() { return numberOfPreferredNeighbors; }
+    public  void setNumberOfPreferredNeighbors(int numberOfPreferredNeighbors) { CommonPeerProperties.numberOfPreferredNeighbors = numberOfPreferredNeighbors; }
 
-    public static int getUnchokingInterval() { return unchokingInterval; }
-    public static void setUnchokingInterval(int unchokingInterval) { CommonPeerProperties.unchokingInterval = unchokingInterval; }
+    public  int getUnchokingInterval() { return unchokingInterval; }
+    public  void setUnchokingInterval(int unchokingInterval) { CommonPeerProperties.unchokingInterval = unchokingInterval; }
 
-    public static int getOptimisticUnchokingInterval() { return optimisticUnchokingInterval; }
-    public static void setOptimisticUnchokingInterval(int optimisticUnchokingInterval) { CommonPeerProperties.optimisticUnchokingInterval = optimisticUnchokingInterval; }
+    public  int getOptimisticUnchokingInterval() { return optimisticUnchokingInterval; }
+    public  void setOptimisticUnchokingInterval(int optimisticUnchokingInterval) { CommonPeerProperties.optimisticUnchokingInterval = optimisticUnchokingInterval; }
 
-    public static String getFileName() { return fileName; }
-    public static void setFileName(String fileName) { CommonPeerProperties.fileName = fileName; }
+    public  String getFileName() { return fileName; }
+    public  void setFileName(String fileName) { CommonPeerProperties.fileName = fileName; }
 
-    public static int getFileSize() { return fileSize; }
-    public static void setFileSize(int fileSize) { CommonPeerProperties.fileSize = fileSize; }
+    public  int getFileSize() { return fileSize; }
+    public  void setFileSize(int fileSize) { CommonPeerProperties.fileSize = fileSize; }
 
-    public static int getPieceSize() { return pieceSize; }
-    public static void setPieceSize(int pieceSize) { CommonPeerProperties.pieceSize = pieceSize; }
+    public  int getPieceSize() { return pieceSize; }
+    public  void setPieceSize(int pieceSize) { CommonPeerProperties.pieceSize = pieceSize; }
 
 
 }

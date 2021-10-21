@@ -1,9 +1,17 @@
 
 public class peerProcess {
+
     public static void main(String[] args){
-        int peerID = Integer.parseInt(args[0]);
-        commonpeerproperties cpp = new CommonPeerPropties;
+        CommonPeerProperties cpp = new CommonPeerProperties();
         cpp.read();
-        cpp.get(filename);
+        String fileName = cpp.getFileName();
+        int numberOfPreferredNeighbors = cpp.getNumberOfPreferredNeighbors();
+        int unchokingInterval = cpp.getUnchokingInterval();
+        int optimisticUnchokingInterval = cpp.getOptimisticUnchokingInterval();
+        int fileSize = cpp.getFileSize();
+        int pieceSize = cpp.getPieceSize();
+
+        int peerID = Integer.parseInt(args[0]);
+
     }
 }
