@@ -11,19 +11,80 @@ public class Client {
 	String message;                //message send to the server
 	String MESSAGE;                //capitalized message read from the server
 
-	public void Client() {}
+    private final static String fileOutput = "C:\\Users\\swimg\\IdeaProjects\\Computer Networking Project\\src\\peer_1002\\testout.jpg";
+
+    public void Client() {}
+
+    public void fileTransfer(){
+		/*System.out.println("in file transfer");
+
+		byte[] aByte = new byte[1];
+    	int bytesRead;
+
+    	InputStream is = null;
+    	try{
+    		is = requestSocket.getInputStream();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+    	if (is != null){
+			System.out.println("in file transfer");
+
+			FileOutputStream fos = null;
+    		BufferedOutputStream bos = null;
+    		try{
+				System.out.println("in file transfer");
+
+				fos = new FileOutputStream(fileOutput);
+				System.out.println("oeoe");
+
+				bos = new BufferedOutputStream(fos);
+				System.out.println("oeoe");
+
+				bytesRead = is.read(aByte, 0, aByte.length);
+				System.out.println("oeoe");
+    			do{
+    				baos.write(aByte);
+    				bytesRead = is.read(aByte);
+				} while (bytesRead != -1);
+				System.out.println("oifjoeifj");
+    			bos.write(baos.toByteArray());
+    			bos.flush();
+    			bos.close();
+
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}*/
+		File file = new File(fileOutput);
+		try{
+		DataInputStream dis = new DataInputStream(requestSocket.getInputStream());
+		OutputStream out = new FileOutputStream(file);
+		int fileLength = dis.readInt();
+		byte[] filebytes = new byte[fileLength];
+		dis.readFully(filebytes, 0 , filebytes.length);
+		out.write(filebytes);
+	    } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 	void run()
 	{
+
 		try{
 			//create a socket to connect to the server
-			requestSocket = new Socket("localhost", 8000);
-			System.out.println("Connected to localhost in port 8000");
+			requestSocket = new Socket("localhost", 8001);
+			System.out.println("Connected to localhost in port 8001");
 			//initialize inputStream and outputStream
+
 			out = new ObjectOutputStream(requestSocket.getOutputStream());
 			out.flush();
 			in = new ObjectInputStream(requestSocket.getInputStream());
-			
+
 			//get Input from standard input
 			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
 			while(true)
@@ -35,8 +96,17 @@ public class Client {
 				sendMessage(message);
 				//Receive the upperCase sentence from the server
 				MESSAGE = (String)in.readObject();
+
+				//ADDED THIS
+				if (MESSAGE.equals("DOWNLOAD")){
+					fileTransfer();
+				}
+				System.out.println("back on client");
+				//END OF ADDED SECTION
+
 				//show the message to the user
 				System.out.println("Receive message: " + MESSAGE);
+				message=null;
 			}
 		}
 		catch (ConnectException e) {
@@ -49,6 +119,7 @@ public class Client {
 			System.err.println("You are trying to connect to an unknown host!");
 		}
 		catch(IOException ioException){
+			System.out.println("Error: ");
 			ioException.printStackTrace();
 		}
 		finally{
@@ -56,6 +127,7 @@ public class Client {
 			try{
 				in.close();
 				out.close();
+				System.out.println("boom");
 				requestSocket.close();
 			}
 			catch(IOException ioException){

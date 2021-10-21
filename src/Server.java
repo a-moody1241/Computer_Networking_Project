@@ -6,10 +6,13 @@ import java.util.*;
 
 public class Server {
 
-	private static final int sPort = 8000;   //The server will be listening on this port number
+	//add
+	private final static String fileToSend = "C:\\Users\\swimg\\IdeaProjects\\Computer Networking Project\\src\\peer_1001\\tree.jpg";
+	//added
 
+	private static final int sPort = 8001;   //The server will be listening on this port number
 	public static void main(String[] args) throws Exception {
-		System.out.println("The server is running."); 
+		System.out.println("The server is running.");
         	ServerSocket listener = new ServerSocket(sPort);
 		int clientNum = 1;
         	try {
@@ -40,11 +43,56 @@ public class Server {
 	    		this.no = no;
         	}
 
+        public void fileTransfer(){
+        		/*System.out.println("in file transfer");
+        		BufferedOutputStream outToClient = null;
+        		FileInputStream fis = null;
+        		try{
+        			outToClient = new BufferedOutputStream(connection.getOutputStream());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
+        		if (outToClient != null){
+        			File file = new File(fileToSend);
+        			byte[] aByte = new byte[(int) file.length()];
+        			try {
+        				fis = new FileInputStream(file);
+					} catch (FileNotFoundException e) {
+						e.printStackTrace();
+					}
+        			BufferedInputStream bis = new BufferedInputStream(fis);
+        			try{
+        				bis.read(aByte, 0, aByte.length);
+        				outToClient.write(aByte, 0, aByte.length);
+        				outToClient.flush();
+        				outToClient.close();
+        				connection.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}*/
+        		try{
+        			FileInputStream fis = new FileInputStream(fileToSend);
+        			DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
+        			File file = new File(fileToSend);
+        			byte[] filebytes = new byte[(int) file.length()];
+        			fis.read(filebytes);
+        			dos.writeInt(filebytes.length);
+        			dos.write(filebytes);
+        		} catch (IOException e) {
+					e.printStackTrace();
+				}
+		}
+
+
         public void run() {
 
 
 
  		try{
+
+
 			//initialize Input and Output streams
 			out = new ObjectOutputStream(connection.getOutputStream());
 			out.flush();
@@ -60,6 +108,15 @@ public class Server {
 					MESSAGE = message.toUpperCase();
 					//send MESSAGE back to the client
 					sendMessage(MESSAGE);
+
+					//ADDED THIS
+					if (MESSAGE.equals("DOWNLOAD")){
+						fileTransfer();
+
+					}
+					//DONE WITH ADDED SECTION
+					System.out.println("pop");
+
 				}
 			}
 			catch(ClassNotFoundException classnot){
@@ -67,17 +124,19 @@ public class Server {
 				}
 		}
 		catch(IOException ioException){
-			System.out.println("Disconnect with Client " + no);
+			System.out.println("Disconnect with Client2 " + no + " " + ioException);
+			ioException.printStackTrace();
 		}
 		finally{
 			//Close connections
 			try{
+			    System.out.println("ow");
 				in.close();
 				out.close();
 				connection.close();
 			}
 			catch(IOException ioException){
-				System.out.println("Disconnect with Client " + no);
+				System.out.println("Disconnect with Client3 " + no);
 			}
 		}
 	}
