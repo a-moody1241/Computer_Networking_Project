@@ -16,11 +16,10 @@ public class Client {
     public void Client() {}
 
     public void fileTransfer(){
-		System.out.println("in file transfer");
+		/*System.out.println("in file transfer");
 
 		byte[] aByte = new byte[1];
     	int bytesRead;
-		System.out.println("in file transfer");
 
     	InputStream is = null;
     	try{
@@ -28,10 +27,7 @@ public class Client {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		System.out.println("in file transfer");
-
     	ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		System.out.println("in file transfer");
 
     	if (is != null){
 			System.out.println("in file transfer");
@@ -61,8 +57,19 @@ public class Client {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		}
-	}
+		}*/
+		File file = new File(fileOutput);
+		try{
+		DataInputStream dis = new DataInputStream(requestSocket.getInputStream());
+		OutputStream out = new FileOutputStream(file);
+		int fileLength = dis.readInt();
+		byte[] filebytes = new byte[fileLength];
+		dis.readFully(filebytes, 0 , filebytes.length);
+		out.write(filebytes);
+	    } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 
 	void run()
@@ -99,6 +106,7 @@ public class Client {
 
 				//show the message to the user
 				System.out.println("Receive message: " + MESSAGE);
+				message=null;
 			}
 		}
 		catch (ConnectException e) {

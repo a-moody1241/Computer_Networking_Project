@@ -45,7 +45,7 @@ public class Server {
         	}
 
         public void fileTransfer(){
-        		System.out.println("in file transfer");
+        		/*System.out.println("in file transfer");
         		BufferedOutputStream outToClient = null;
         		FileInputStream fis = null;
         		try{
@@ -72,6 +72,17 @@ public class Server {
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
+				}*/
+        		try{
+        			FileInputStream fis = new FileInputStream(fileToSend);
+        			DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
+        			File file = new File(fileToSend);
+        			byte[] filebytes = new byte[(int) file.length()];
+        			fis.read(filebytes);
+        			dos.writeInt(filebytes.length);
+        			dos.write(filebytes);
+        		} catch (IOException e) {
+					e.printStackTrace();
 				}
 		}
 
@@ -99,9 +110,7 @@ public class Server {
 					//ADDED THIS
 					if (MESSAGE.equals("DOWNLOAD")){
 						fileTransfer();
-                        out = new ObjectOutputStream(connection.getOutputStream());
-                        out.flush();
-                        in = new ObjectInputStream(connection.getInputStream());
+
 					}
 					//DONE WITH ADDED SECTION
 					System.out.println("pop");
