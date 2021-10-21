@@ -39,4 +39,8 @@ public class PeersInformation {
 
     }
 
+    public Vector<PeerInformation> getPeerInformation() {
+        return new Vector<PeerInformation>(peerInfo);
+    }
+
 }
