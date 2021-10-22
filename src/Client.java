@@ -2,6 +2,8 @@ import java.net.*;
 import java.io.*;
 import java.nio.*;
 import java.nio.channels.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class Client {
@@ -16,57 +18,16 @@ public class Client {
     public void Client() {}
 
     public void fileTransfer(){
-		/*System.out.println("in file transfer");
 
-		byte[] aByte = new byte[1];
-    	int bytesRead;
-
-    	InputStream is = null;
-    	try{
-    		is = requestSocket.getInputStream();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-    	if (is != null){
-			System.out.println("in file transfer");
-
-			FileOutputStream fos = null;
-    		BufferedOutputStream bos = null;
-    		try{
-				System.out.println("in file transfer");
-
-				fos = new FileOutputStream(fileOutput);
-				System.out.println("oeoe");
-
-				bos = new BufferedOutputStream(fos);
-				System.out.println("oeoe");
-
-				bytesRead = is.read(aByte, 0, aByte.length);
-				System.out.println("oeoe");
-    			do{
-    				baos.write(aByte);
-    				bytesRead = is.read(aByte);
-				} while (bytesRead != -1);
-				System.out.println("oifjoeifj");
-    			bos.write(baos.toByteArray());
-    			bos.flush();
-    			bos.close();
-
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}*/
 		File file = new File(fileOutput);
-		try{
-		DataInputStream dis = new DataInputStream(requestSocket.getInputStream());
-		OutputStream out = new FileOutputStream(file);
-		int fileLength = dis.readInt();
-		byte[] filebytes = new byte[fileLength];
-		dis.readFully(filebytes, 0 , filebytes.length);
-		out.write(filebytes);
-	    } catch (IOException e) {
+		try {
+			DataInputStream dis = new DataInputStream(requestSocket.getInputStream());
+			OutputStream out = new FileOutputStream(file);
+			int fileLength = dis.readInt();
+			byte[] filebytes = new byte[fileLength];
+			dis.readFully(filebytes, 0, filebytes.length);
+			out.write(filebytes);
+		} catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -76,6 +37,7 @@ public class Client {
 	{
 
 		try{
+
 			//create a socket to connect to the server
 			requestSocket = new Socket("localhost", 8001);
 			System.out.println("Connected to localhost in port 8001");
@@ -85,6 +47,10 @@ public class Client {
 			out.flush();
 			in = new ObjectInputStream(requestSocket.getInputStream());
 
+			/*byte[] handshakes = handshake.sendHandshake(out, 1001);
+			String s = new String(handshakes, StandardCharsets.UTF_8);
+			System.out.println("Created the handshake: " + s);
+			*/
 			//get Input from standard input
 			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
 			while(true)
@@ -127,7 +93,6 @@ public class Client {
 			try{
 				in.close();
 				out.close();
-				System.out.println("boom");
 				requestSocket.close();
 			}
 			catch(IOException ioException){
