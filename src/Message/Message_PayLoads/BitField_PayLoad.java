@@ -1,7 +1,7 @@
 package Message.Message_PayLoads;
 
 public class BitField_PayLoad extends PayLoad{
-    private static final long serialVersionUID = 4L;
+    private static final long serialVersionUID = 3L;
 
     private byte[] bitfield;
 
