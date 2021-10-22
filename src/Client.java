@@ -2,6 +2,8 @@ import java.net.*;
 import java.io.*;
 import java.nio.*;
 import java.nio.channels.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class Client {
@@ -15,82 +17,17 @@ public class Client {
 
     public void Client() {}
 
-    // Returns a handshake byte array
-		public byte[] createHandshake(int peerID) {
-      // Construct handshake header byte array
-      String headerString = "P2PFILESHARINGPROJ";
-      Charset charset = StandardCharsets.US_ASCII;
-      byte[] headerBytes = charset.encode(headerString).array();
-
-      // Construct peerID byte array
-      byte[] peerIDBytes = peerID.toByteArray;
-
-      // Concatenate handshake header and peerID byte strings into final handshake message
-      // There are 10 bytes of zero padding between header and peerID in final message.
-      byte[] handshake = new byte [32];
-      System.arraycopy(headerBytes, 0, handshake, 0, headerBytes.length);
-      System.arraycopy(peerIDBytes, 0, handshake, 27, peerIDBytes.length);
-      
-      return handshake;
-      /* 
-      *  TODO (dylan): I am going to move this function
-      *  into a new class called Handshake.java and add few more helper functions etc.
-      */
-
-		}
-
     public void fileTransfer(){
-		/*System.out.println("in file transfer");
 
-		byte[] aByte = new byte[1];
-    	int bytesRead;
-
-    	InputStream is = null;
-    	try{
-    		is = requestSocket.getInputStream();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-    	if (is != null){
-			System.out.println("in file transfer");
-
-			FileOutputStream fos = null;
-    		BufferedOutputStream bos = null;
-    		try{
-				System.out.println("in file transfer");
-
-				fos = new FileOutputStream(fileOutput);
-				System.out.println("oeoe");
-
-				bos = new BufferedOutputStream(fos);
-				System.out.println("oeoe");
-
-				bytesRead = is.read(aByte, 0, aByte.length);
-				System.out.println("oeoe");
-    			do{
-    				baos.write(aByte);
-    				bytesRead = is.read(aByte);
-				} while (bytesRead != -1);
-				System.out.println("oifjoeifj");
-    			bos.write(baos.toByteArray());
-    			bos.flush();
-    			bos.close();
-
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}*/
 		File file = new File(fileOutput);
-		try{
-		DataInputStream dis = new DataInputStream(requestSocket.getInputStream());
-		OutputStream out = new FileOutputStream(file);
-		int fileLength = dis.readInt();
-		byte[] filebytes = new byte[fileLength];
-		dis.readFully(filebytes, 0 , filebytes.length);
-		out.write(filebytes);
-	    } catch (IOException e) {
+		try {
+			DataInputStream dis = new DataInputStream(requestSocket.getInputStream());
+			OutputStream out = new FileOutputStream(file);
+			int fileLength = dis.readInt();
+			byte[] filebytes = new byte[fileLength];
+			dis.readFully(filebytes, 0, filebytes.length);
+			out.write(filebytes);
+		} catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -100,6 +37,9 @@ public class Client {
 	{
 
 		try{
+			byte[] handshakes = handshake.createHandshake(1001);
+			String s = new String(handshakes, StandardCharsets.UTF_8);
+			System.out.println("Created the handshake: " + s);
 			//create a socket to connect to the server
 			requestSocket = new Socket("localhost", 8001);
 			System.out.println("Connected to localhost in port 8001");

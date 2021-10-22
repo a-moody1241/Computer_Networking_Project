@@ -32,7 +32,7 @@ public class ServerFileTransfer extends Server {
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-				}*/
+				}
         try{
             FileInputStream fis = new FileInputStream(fileToSend);
             DataOutputStream dos;// = new DataOutputStream(connection.getOutputStream());
@@ -43,6 +43,6 @@ public class ServerFileTransfer extends Server {
             //dos.write(filebytes);
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 }
