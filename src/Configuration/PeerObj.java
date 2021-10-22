@@ -1,8 +1,10 @@
+package Configuration;
+
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class PeerInformation {
+public class PeerObj {
     private String id;
     private  String address;
     private  String port;
@@ -11,7 +13,7 @@ public class PeerInformation {
     private BitSet receivedParts;
     private AtomicBoolean interested;
 
-    public PeerInformation(String peerId, String peerAddress, String peerPort, boolean hasFile, AtomicInteger bytesDownloadedFrom, BitSet receivedParts) {
+    public PeerObj(String peerId, String peerAddress, String peerPort, boolean hasFile, AtomicInteger bytesDownloadedFrom, BitSet receivedParts) {
         this.id = peerId;
         this.address = peerAddress;
         this.port = peerPort;
@@ -21,11 +23,11 @@ public class PeerInformation {
         this.interested = new AtomicBoolean(false);
     }
 
-    public PeerInformation(int peerId) {
+    public PeerObj(int peerId) {
         this(Integer.toString(peerId), "127.0.0.1", "0", false);
     }
 
-    public PeerInformation(String id, String address, String port, boolean hasFile) {
+    public PeerObj(String id, String address, String port, boolean hasFile) {
         super();
         this.id = id;
         this.address = address;
@@ -75,8 +77,8 @@ public class PeerInformation {
         if (obj == null) {
             return false;
         }
-        if (obj instanceof PeerInformation) {
-            return (((PeerInformation) obj).id.equals(this.id));
+        if (obj instanceof PeerObj) {
+            return (((PeerObj) obj).id.equals(this.id));
         }
         return false;
     }
@@ -94,9 +96,9 @@ public class PeerInformation {
                 .append(this.port).append(" Has File: ").append(this.hasFile).toString();
     }
 
-    public static Collection<Integer> toIdSet(Collection<PeerInformation> peers) {
+    public static Collection<Integer> toIdSet(Collection<PeerObj> peers) {
         Set<Integer> iDs = new HashSet<>();
-        for (PeerInformation peer : peers) {
+        for (PeerObj peer : peers) {
             iDs.add(peer.getId());
         }
         return iDs;

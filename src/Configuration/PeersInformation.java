@@ -1,7 +1,8 @@
+package Configuration;
+
 import sun.security.pkcs.ParsingException;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Vector;
@@ -9,7 +10,7 @@ import java.util.Vector;
 public class PeersInformation {
 
     public static final String CONFIG_FILE = "PeerInfo.cfg";
-    private final Vector<PeerInformation> peerInfo = new Vector<PeerInformation>();
+    private final Vector<PeerObj> peerInfo = new Vector<PeerObj>();
 
 
     public void read() throws IOException {
@@ -31,7 +32,7 @@ public class PeersInformation {
                 hasFile = false;
             }
 
-            PeerInformation peer = new PeerInformation(items[0].trim(), items[1].trim(), items[2].trim(), hasFile);
+            PeerObj peer = new PeerObj(items[0].trim(), items[1].trim(), items[2].trim(), hasFile);
 
             peerInfo.addElement(peer);
 
@@ -39,8 +40,8 @@ public class PeersInformation {
 
     }
 
-    public Vector<PeerInformation> getPeerInformation() {
-        return new Vector<PeerInformation>(peerInfo);
+    public Vector<PeerObj> getPeerInformation() {
+        return new Vector<PeerObj>(peerInfo);
     }
 
 }

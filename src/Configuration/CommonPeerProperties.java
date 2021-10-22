@@ -1,3 +1,5 @@
+package Configuration;
+
 import java.io.*;
 
 public class CommonPeerProperties {
