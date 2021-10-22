@@ -5,12 +5,20 @@ import java.nio.charset.StandardCharsets;
 
 public class handshake {
     private static String header = "P2PFILESHARINGPROJ";
-    private int peerID;
+    private static int peerID;
     public handshake(int peerID){
         super();
         this.peerID = peerID;
         this.header = header;
     }
+    public String getHeader(){
+        return header;
+    }
+
+    public int getPeerID(){
+        return peerID;
+    }
+
     // Returns a handshake byte array
     public static byte[] createHandshake(int peerID) {
         // Construct handshake header byte array
@@ -30,11 +38,12 @@ public class handshake {
         return handshake;
     }
 
-    public static void sendHandshake(OutputStream os, int peerID) throws IOException {
+    public static byte[] sendHandshake(OutputStream os, int peerID) throws IOException {
         byte[] handshake = createHandshake(peerID);
         ObjectOutputStream oos = new ObjectOutputStream(os);
         oos.writeObject(handshake);
-        System.out.println("Sending the handshake to peerID: " + peerID);
+        System.out.println("Sending the handshake to " + peerID);
+        return handshake;
     }
 
     public static handshake receiveHandshake(InputStream is) throws IOException, ClassNotFoundException {

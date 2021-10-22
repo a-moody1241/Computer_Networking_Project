@@ -37,9 +37,7 @@ public class Client {
 	{
 
 		try{
-			byte[] handshakes = handshake.createHandshake(1001);
-			String s = new String(handshakes, StandardCharsets.UTF_8);
-			System.out.println("Created the handshake: " + s);
+
 			//create a socket to connect to the server
 			requestSocket = new Socket("localhost", 8001);
 			System.out.println("Connected to localhost in port 8001");
@@ -49,6 +47,10 @@ public class Client {
 			out.flush();
 			in = new ObjectInputStream(requestSocket.getInputStream());
 
+			/*byte[] handshakes = handshake.sendHandshake(out, 1001);
+			String s = new String(handshakes, StandardCharsets.UTF_8);
+			System.out.println("Created the handshake: " + s);
+			*/
 			//get Input from standard input
 			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
 			while(true)
@@ -91,7 +93,6 @@ public class Client {
 			try{
 				in.close();
 				out.close();
-				System.out.println("boom");
 				requestSocket.close();
 			}
 			catch(IOException ioException){

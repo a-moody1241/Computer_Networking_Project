@@ -2,6 +2,7 @@ import java.net.*;
 import java.io.*;
 import java.nio.*;
 import java.nio.channels.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class Server {
@@ -44,34 +45,6 @@ public class Server {
         	}
 
         public void fileTransfer(){
-        		/*System.out.println("in file transfer");
-        		BufferedOutputStream outToClient = null;
-        		FileInputStream fis = null;
-        		try{
-        			outToClient = new BufferedOutputStream(connection.getOutputStream());
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-
-        		if (outToClient != null){
-        			File file = new File(fileToSend);
-        			byte[] aByte = new byte[(int) file.length()];
-        			try {
-        				fis = new FileInputStream(file);
-					} catch (FileNotFoundException e) {
-						e.printStackTrace();
-					}
-        			BufferedInputStream bis = new BufferedInputStream(fis);
-        			try{
-        				bis.read(aByte, 0, aByte.length);
-        				outToClient.write(aByte, 0, aByte.length);
-        				outToClient.flush();
-        				outToClient.close();
-        				connection.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}*/
         		try{
         			FileInputStream fis = new FileInputStream(fileToSend);
         			DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
@@ -100,6 +73,10 @@ public class Server {
 			try{
 				while(true)
 				{
+					/*handshake handshakes = handshake.receiveHandshake(in);
+					System.out.println("Created the handshake: peerID: " +
+							Integer.toString(handshakes.getPeerID()) + "Header: " +
+							handshakes.getHeader().toString());*/
 					//receive the message sent from the client
 					message = (String)in.readObject();
 					//show the message to the user
@@ -115,7 +92,6 @@ public class Server {
 
 					}
 					//DONE WITH ADDED SECTION
-					System.out.println("pop");
 
 				}
 			}
@@ -130,7 +106,6 @@ public class Server {
 		finally{
 			//Close connections
 			try{
-			    System.out.println("ow");
 				in.close();
 				out.close();
 				connection.close();
