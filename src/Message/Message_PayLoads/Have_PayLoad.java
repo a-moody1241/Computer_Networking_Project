@@ -1,4 +1,4 @@
-package Message_PayLoads;
+package Message.Message_PayLoads;
 
 public class Have_PayLoad extends PayLoad{
     private static final long serialVersionUID = 4L;
