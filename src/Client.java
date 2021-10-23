@@ -6,6 +6,15 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+
+/**
+ * TO RUN THE FILE TRANSFER:
+ * 		Run Server.java
+ * 		While Server.java is running, run Client.java
+ * 		When prompted with "Hello, please input a sentence:", type in "download" and press enter
+ * 		The file will then be transferred from the peer_1001 package to the peer_1002 package through the 8000 socket.
+**/
+
 public class Client {
 	Socket requestSocket;           //socket connect to the server
 	ObjectOutputStream out;         //stream write to the socket
@@ -13,7 +22,7 @@ public class Client {
 	String message;                //message send to the server
 	String MESSAGE;                //capitalized message read from the server
 
-    private final static String fileOutput = "C:\\Users\\swimg\\IdeaProjects\\Computer Networking Project\\src\\peer_1002\\testout.jpg";
+    private final static String fileOutput = "/Users/catherinehealy/Documents/GitHub/Computer_Networking_Project/src/peer_1002/testout.jpg";//"src/peer_1002/testout.jpg"; //"src/peer_1001/tree.jpg"
 
     public void Client() {}
 
@@ -39,8 +48,8 @@ public class Client {
 		try{
 
 			//create a socket to connect to the server
-			requestSocket = new Socket("localhost", 8001);
-			System.out.println("Connected to localhost in port 8001");
+			requestSocket = new Socket("localhost", 8000);
+			System.out.println("Connected to localhost in port 8000");
 			//initialize inputStream and outputStream
 
 			out = new ObjectOutputStream(requestSocket.getOutputStream());

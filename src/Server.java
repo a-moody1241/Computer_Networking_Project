@@ -8,11 +8,13 @@ import java.util.*;
 public class Server {
 
 	//add
-	private final static String fileToSend = "C:\\Users\\swimg\\IdeaProjects\\Computer Networking Project\\src\\peer_1001\\tree.jpg";
+	private final static String fileToSend = "/Users/catherinehealy/Documents/GitHub/Computer_Networking_Project/src/peer_1001/tree.jpg";//"src/peer_1001/tree.jpg";
 	//added
 
-	private static final int sPort = 8001;   //The server will be listening on this port number
+	private static final int sPort = 8000;   //The server will be listening on this port number
 	public static void main(String[] args) throws Exception {
+
+
 		System.out.println("The server is running.");
         	ServerSocket listener = new ServerSocket(sPort);
 		int clientNum = 1;
