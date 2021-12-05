@@ -1,8 +1,12 @@
+import Configuration.CommonPeerProperties;
+import Configuration.PeerObj;
+import Configuration.PeersInformation;
+
 import java.io.IOException;
 import java.util.Vector;
 
 public class peerProcess {
-    private static Vector<PeerInformation> otherPeers = new Vector<PeerInformation>();
+    private static Vector<PeerObj> otherPeers = new Vector<PeerObj>();
 
 
     public static void main(String[] args){
@@ -21,11 +25,11 @@ public class peerProcess {
         Peer firstPeer;
 
         int peerID = Integer.parseInt(args[0]);
-        Vector<PeerInformation> peers = new Vector<PeerInformation>();
+        Vector<PeerObj> peers = new Vector<PeerObj>();
         try{
             peersInformation.read();
             peers = peersInformation.getPeerInformation();
-            for (PeerInformation peer : peers){
+            for (PeerObj peer : peers){
                 if (peerID == peer.getId()){
                     hostName = peer.getPeerAddress();
                     portNumber = peer.getPeerPort();
@@ -44,7 +48,7 @@ public class peerProcess {
     public static void firstPeerProcess(Peer firstPeer){
         //handshake with all of the peers
         while(true){
-                for(PeerInformation cpeer: otherPeers){
+                for(PeerObj cpeer: otherPeers){
                     //handshake file that Dylan made between firstpeer and cpeer
                 }
 

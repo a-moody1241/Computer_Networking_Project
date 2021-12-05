@@ -8,6 +8,7 @@ public class Message implements Serializable {
 
     private int messageLength;
     private MessageGroup messageGroup;
+
 //    private PayLoad messagePayload;
 
     public int getMessageLength() {return messageLength;}
