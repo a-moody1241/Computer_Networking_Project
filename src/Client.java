@@ -54,12 +54,14 @@ public class Client {
 
 			out = new ObjectOutputStream(requestSocket.getOutputStream());
 			out.flush();
+
+			//create and send handshake here
+			byte[] handshakes = handshake.sendHandshake(out, 1001);
+			String s = new String(handshakes, StandardCharsets.UTF_8);
+			System.out.println("Created the handshake: " + s + " !");
+
 			in = new ObjectInputStream(requestSocket.getInputStream());
 
-			/*byte[] handshakes = handshake.sendHandshake(out, 1001);
-			String s = new String(handshakes, StandardCharsets.UTF_8);
-			System.out.println("Created the handshake: " + s);
-			*/
 			//get Input from standard input
 			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
 			while(true)
@@ -67,8 +69,10 @@ public class Client {
 				System.out.print("Hello, please input a sentence: ");
 				//read a sentence from the standard input
 				message = bufferedReader.readLine();
+
 				//Send the sentence to the server
 				sendMessage(message);
+
 				//Receive the upperCase sentence from the server
 				MESSAGE = (String)in.readObject();
 

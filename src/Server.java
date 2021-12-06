@@ -43,7 +43,7 @@ public class Server {
 
         	public Handler(Socket connection, int no) {
             		this.connection = connection;
-	    		this.no = no;
+	    			this.no = no;
         	}
 
         public void fileTransfer(){
@@ -71,14 +71,18 @@ public class Server {
 			//initialize Input and Output streams
 			out = new ObjectOutputStream(connection.getOutputStream());
 			out.flush();
+
+			//byte[] handshakes = handshake.sendHandshake(out, 1002);
+			//String s = new String(handshakes, StandardCharsets.UTF_8);
+			//System.out.println("Created the handshake: " + s);
+
 			in = new ObjectInputStream(connection.getInputStream());
+			byte[] receivedH = handshake.receiveHandshake(in);
+			System.out.println("Received the handshake" );
+
 			try{
 				while(true)
 				{
-					/*handshake handshakes = handshake.receiveHandshake(in);
-					System.out.println("Created the handshake: peerID: " +
-							Integer.toString(handshakes.getPeerID()) + "Header: " +
-							handshakes.getHeader().toString());*/
 					//receive the message sent from the client
 					message = (String)in.readObject();
 					//show the message to the user
@@ -101,7 +105,7 @@ public class Server {
 					System.err.println("Data received in unknown format");
 				}
 		}
-		catch(IOException ioException){
+		catch(IOException | ClassNotFoundException ioException){
 			System.out.println("Disconnect with Client2 " + no + " " + ioException);
 			ioException.printStackTrace();
 		}

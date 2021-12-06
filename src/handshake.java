@@ -1,7 +1,10 @@
+import com.oracle.xmlns.internal.webservices.jaxws_databinding.SoapBindingUse;
+
 import java.io.*;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.sql.SQLOutput;
 
 public class handshake {
     private static String header = "P2PFILESHARINGPROJ";
@@ -11,16 +14,16 @@ public class handshake {
         this.peerID = peerID;
         this.header = header;
     }
-    public String getHeader(){
-        return header;
-    }
-
+    public String getHeader(){ return header; }
     public int getPeerID(){
         return peerID;
     }
+    public void setPeerID(int peerID){ this.peerID = peerID;}
+
 
     // Returns a handshake byte array
     public static byte[] createHandshake(int peerID) {
+        handshake h = new handshake(peerID);
         // Construct handshake header byte array
         Charset charset = StandardCharsets.US_ASCII;
         byte[] headerBytes = charset.encode(header).array();
@@ -34,11 +37,11 @@ public class handshake {
         byte[] handshake = new byte [32];
         System.arraycopy(headerBytes, 0, handshake, 0, headerBytes.length);
         System.arraycopy(peerIDBytes, 0, handshake, 27, peerIDBytes.length);
-
+        System.out.println("Creating the handshake");
         return handshake;
     }
 
-    public static byte[] sendHandshake(OutputStream os, int peerID) throws IOException {
+    public static byte[] sendHandshake(ObjectOutputStream os, int peerID) throws IOException {
         byte[] handshake = createHandshake(peerID);
         ObjectOutputStream oos = new ObjectOutputStream(os);
         oos.writeObject(handshake);
@@ -46,9 +49,16 @@ public class handshake {
         return handshake;
     }
 
-    public static handshake receiveHandshake(InputStream is) throws IOException, ClassNotFoundException {
+    public static byte[] receiveHandshake(ObjectInputStream is) throws IOException, ClassNotFoundException {
+        System.out.println("Receiving handshake from ");
         ObjectInputStream ois = new ObjectInputStream(is);
-        handshake response = (handshake) ois.readObject();
+        byte[] response = (byte[]) ois.readObject();
+        //String s = new String(response, StandardCharsets.UTF_8);
+        //System.out.println(response.length);
         return response;
+    }
+
+    public static void printHandshake(handshake h){
+        System.out.println("Header :" + h.getHeader() + "\nPeer ID: " + h.getPeerID());
     }
 }

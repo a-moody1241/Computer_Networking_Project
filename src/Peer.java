@@ -1,8 +1,11 @@
+import java.net.Socket;
+
 public class Peer {
     private int peerID;
     private String hostName;
     private int portNumber;
     private boolean filePresent;
+    private Socket socket;
 
     public Peer(String peerID, String hostName, String portNumber, String filePresent){
         super();
@@ -48,5 +51,7 @@ public class Peer {
         this.filePresent = filePresent;
     }
 
-    public static void main(String[] args){}
+    public Socket getSocket(){
+        return socket;
+    }
 }
