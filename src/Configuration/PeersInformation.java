@@ -26,7 +26,7 @@ public class PeersInformation {
         boolean hasFile = true;
         while ((line = br.readLine()) != null) {
             line = line.trim();
-            if ( (line.length() == 0) ) { //todo (line.startsWith("#")) || is this necessary
+            if ( (line.length() == 0)) {
                 continue;
             }
 
