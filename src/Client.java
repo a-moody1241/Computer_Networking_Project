@@ -49,7 +49,7 @@ public class Client {
 			//create and send handshake here
 			byte[] handshakes = handshake.sendHandshake(out, 1001);
 			String s = new String(handshakes, StandardCharsets.UTF_8);
-			System.out.println("Created the handshake: " + s);
+			System.out.println("Created the handshake: " + s + " !");
 
 			in = new ObjectInputStream(requestSocket.getInputStream());
 
