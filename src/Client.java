@@ -71,7 +71,6 @@ public class Client {
 				if (MESSAGE.equals("DOWNLOAD")){
 					fileTransfer();
 				}
-				System.out.println("back on client");
 				//END OF ADDED SECTION
 
 				//show the message to the user

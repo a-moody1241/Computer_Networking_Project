@@ -12,7 +12,7 @@ public class CommonPeerProperties {
     private static int fileSize;
     private static int pieceSize;
 
-    public void read() {
+    public void getPeerProperties() {
         try {
             BufferedReader br = new BufferedReader(new FileReader(CONFIG_FILE));
             String line;
@@ -59,13 +59,13 @@ public class CommonPeerProperties {
     public  int getOptimisticUnchokingInterval() { return optimisticUnchokingInterval; }
     public  void setOptimisticUnchokingInterval(int optimisticUnchokingInterval) { CommonPeerProperties.optimisticUnchokingInterval = optimisticUnchokingInterval; }
 
-    public  String getFileName() { return fileName; }
+    public static String getFileName() { return fileName; }
     public  void setFileName(String fileName) { CommonPeerProperties.fileName = fileName; }
 
-    public  int getFileSize() { return fileSize; }
+    public static int getFileSize() { return fileSize; }
     public  void setFileSize(int fileSize) { CommonPeerProperties.fileSize = fileSize; }
 
-    public  int getPieceSize() { return pieceSize; }
+    public static int getPieceSize() { return pieceSize; }
     public  void setPieceSize(int pieceSize) { CommonPeerProperties.pieceSize = pieceSize; }
 
 
