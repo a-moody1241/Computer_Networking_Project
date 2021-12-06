@@ -1,5 +1,7 @@
 package Message;
 
+import Message.Message_PayLoads.PayLoad;
+
 import java.io.Serializable;
 
 public class Message implements Serializable {
@@ -9,15 +11,15 @@ public class Message implements Serializable {
     private int messageLength;
     private MessageGroup messageGroup;
 
-//    private PayLoad messagePayload;
+    private PayLoad messagePayload;
 
-    public int getMessageLength() {return messageLength;}
-    public void setMessageLength(int messageLength) {this.messageLength = messageLength;}
+//    public int getMessageLength() {return messageLength;}
+//    public void setMessageLength(int messageLength) {this.messageLength = messageLength;}
 
     public MessageGroup getMessageGroup() {return messageGroup;}
-    public void setMessageGroup(MessageGroup messageGroup) {this.messageGroup = messageGroup;}
-
-//    public PayLoad getMessagePayload() {return messagePayload;}
+//    public void setMessageGroup(MessageGroup messageGroup) {this.messageGroup = messageGroup;}
+//
+    public PayLoad getMessagePayload() {return messagePayload;}
 //    public void setMessagePayload(PayLoad messagePayload) {this.messagePayload = messagePayload;}
 
 }
