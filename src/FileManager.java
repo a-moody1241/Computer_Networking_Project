@@ -77,7 +77,7 @@ public class FileManager { //todo fix all this
             } else {
                 temp = noOfFilePieces;
             }
-            bitfield[counter++] = FileUtilities.boolToByte(Arrays.copyOfRange(filePiecesOwned, indexI, temp));
+            bitfield[counter++] = FileUtilities.booleanToByte(Arrays.copyOfRange(filePiecesOwned, indexI, temp));
             indexI = indexI + 8;
         }
         return bitfield;

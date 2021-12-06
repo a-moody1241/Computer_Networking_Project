@@ -86,6 +86,11 @@ public class Connection {
                                     //pManager.add(neighborPeer); todo
                                     Logger.receivingInterestedMessage(neighborPeer.getPeerID());
                                     break;
+                                case NOT_INTERESTED:
+                                    System.out.println("not interested message");
+                                    //pManager.remove(neighborPeer); todo
+                                    Logger.receivingNotInterestedMessage(neighborPeer.getPeerID());
+                                    break;
                                 case BITFIELD:
                                     System.out.println("bitfield message");
                                     BitField_PayLoad bitField_payLoad = (BitField_PayLoad) receivedMsg.getMessagePayload();
