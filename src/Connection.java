@@ -1,3 +1,5 @@
+
+import Configuration.PeerObj;
 import Message.Message;
 import Message.MessageGroup;
 import Message.Message_PayLoads.*;
@@ -12,7 +14,7 @@ import java.util.Objects;
 
 public class Connection {
 
-    private Peer clientPeer;
+    private Peer peer;
     private Peer neighborPeer;
     private ObjectOutputStream out;
     private ObjectInputStream in;
@@ -20,18 +22,16 @@ public class Connection {
     private int piecesDownloaded;
     private PeerManager pManager;
 
-    public Connection(Socket sport, Peer clientPeer, Peer neighborPeer, ObjectInputStream in, ObjectInputStream clientIn, ObjectOutputStream out) {
-        this.clientPeer = clientPeer;
+    public Connection(Peer peer, Peer neighborPeer) {
+        this.peer = peer;
         this.neighborPeer = neighborPeer;
-        this.out = out;
-        this.in = in;
-        this.clientIn = clientIn;
 
-        try {
-            this.clientIn = new ObjectInputStream(neighborPeer.getSocket().getInputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+        this.startConnection();
+    }
+
+    public void startConnection(){
+        Thread sThread = new Thread(new ServerConnection(this.peer.getHostName(), this.peer.getPortNumber()))
     }
 
     public void sendMessage(Message message) {
