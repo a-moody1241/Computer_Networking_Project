@@ -18,6 +18,7 @@ public class Connection {
     private ObjectInputStream in;
     private ObjectInputStream clientIn;
     private int piecesDownloaded;
+    private PeerManager pManager;
 
     public Connection(Socket sport, Peer clientPeer, Peer neighborPeer, ObjectInputStream in, ObjectInputStream clientIn, ObjectOutputStream out) {
         this.clientPeer = clientPeer;
@@ -83,12 +84,12 @@ public class Connection {
                                     break;
                                 case INTERESTED:
                                     System.out.println("interested message");
-                                    //pManager.add(neighborPeer); todo
+                                    pManager.add(neighborPeer);
                                     Logger.receivingInterestedMessage(neighborPeer.getPeerID());
                                     break;
                                 case NOT_INTERESTED:
                                     System.out.println("not interested message");
-                                    //pManager.remove(neighborPeer); todo
+                                    pManager.remove(neighborPeer);
                                     Logger.receivingNotInterestedMessage(neighborPeer.getPeerID());
                                     break;
                                 case BITFIELD:
@@ -109,7 +110,7 @@ public class Connection {
                                     System.out.println("piece message");
                                     FileManager.store((Piece_PayLoad) receivedMsg.getMessagePayload());
                                     clientPeer.setBitField(FileManager.getBitField());
-                                    //pManager.sendHaveAll(((Piece_PayLoad) receivedMsg.getMsgPayload()).getIndex()); todo
+                                    pManager.sendHaveAll(((Piece_PayLoad) receivedMsg.getMessagePayload()).getIndex());
                                     piecesDownloaded++;
                                     Logger.downloadingAPiece(neighborPeer.getPeerID(), ((Piece_PayLoad) receivedMsg.getMessagePayload()).getIndex(), FileManager.getNoOfPiecesAvailable());
                                     if (FileManager.getNooffilepieces() == FileManager.getNooffilepieces()) {
@@ -166,5 +167,9 @@ public class Connection {
 
     public void setNeighborPeer(Peer neighborPeer) {
         this.neighborPeer = neighborPeer;
+    }
+
+    public void resetPiecesDownloaded() {
+        piecesDownloaded = 0;
     }
 }

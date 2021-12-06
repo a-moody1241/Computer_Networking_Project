@@ -50,13 +50,13 @@ public class CommonPeerProperties {
 
     public  String getConfigFile() { return CONFIG_FILE; }
 
-    public  int getNumberOfPreferredNeighbors() { return numberOfPreferredNeighbors; }
+    public static int getNumberOfPreferredNeighbors() { return numberOfPreferredNeighbors; }
     public  void setNumberOfPreferredNeighbors(int numberOfPreferredNeighbors) { CommonPeerProperties.numberOfPreferredNeighbors = numberOfPreferredNeighbors; }
 
-    public  int getUnchokingInterval() { return unchokingInterval; }
+    public static int getUnchokingInterval() { return unchokingInterval; }
     public  void setUnchokingInterval(int unchokingInterval) { CommonPeerProperties.unchokingInterval = unchokingInterval; }
 
-    public  int getOptimisticUnchokingInterval() { return optimisticUnchokingInterval; }
+    public static int getOptimisticUnchokingInterval() { return optimisticUnchokingInterval; }
     public  void setOptimisticUnchokingInterval(int optimisticUnchokingInterval) { CommonPeerProperties.optimisticUnchokingInterval = optimisticUnchokingInterval; }
 
     public static String getFileName() { return fileName; }
@@ -68,5 +68,5 @@ public class CommonPeerProperties {
     public static int getPieceSize() { return pieceSize; }
     public  void setPieceSize(int pieceSize) { CommonPeerProperties.pieceSize = pieceSize; }
 
-
+//getOptimisticUnchokingInterval()
 }

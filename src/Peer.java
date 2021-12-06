@@ -8,6 +8,36 @@ public class Peer {
     private boolean peerUp;//todo change name
     private Socket socket;
 
+    public long getDownloadSpeed() {
+        return downloadSpeed;
+    }
+
+    public void setDownloadSpeed(long downloadSpeed) {
+        this.downloadSpeed = downloadSpeed;
+    }
+
+    private long downloadSpeed; //todo change name
+
+    public boolean isUnChoked() {
+        return unChoked;
+    }
+
+    public void setUnChoked(boolean unChoked) {
+        this.unChoked = unChoked;
+    }
+
+    private boolean unChoked; //todo change name
+
+    public Connection getConnection() {
+        return connection;
+    }
+
+    public void setConnection(Connection connection) {
+        this.connection = connection;
+    }
+
+    private Connection connection;
+
     public byte[] getBitField() {
         return bitField;
     }
@@ -73,5 +103,4 @@ public class Peer {
 
 }
 
-}
 
