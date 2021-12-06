@@ -46,10 +46,9 @@ public class peerProcess {
     public void startProcess(PeerObj callingPeer, Vector<PeerObj> otherPeers) {
         //input thread here
         System.out.println("Starting the process for peer " + callingPeer.getId());
-         for (PeerObj connectingPeer : otherPeers) {
+        for (PeerObj connectingPeer : otherPeers) {
             // new Connection(socket, clientPeer, neighborPeer, );
-         }
-
+        }
 
 
     }
