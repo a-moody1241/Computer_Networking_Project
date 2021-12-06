@@ -119,7 +119,6 @@ public class Connection {
                                         sendRequest();
                                     }
                                     break;
-
                             }
                         }
                     } catch (SocketException e){
