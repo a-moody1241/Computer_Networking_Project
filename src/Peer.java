@@ -5,7 +5,18 @@ public class Peer {
     private String hostName;
     private int portNumber;
     private boolean filePresent;
+    private boolean peerUp;//todo change name
     private Socket socket;
+
+    public byte[] getBitField() {
+        return bitField;
+    }
+
+    public void setBitField(byte[] bitField) {
+        this.bitField = bitField;
+    }
+
+    private byte[] bitField; //todo change name
 
     public Peer(String peerID, String hostName, String portNumber, String filePresent){
         super();
@@ -54,4 +65,9 @@ public class Peer {
     public Socket getSocket(){
         return socket;
     }
+
+    public void setPeerUp(boolean peerUp) {
+        this.peerUp = peerUp;
+    }
+
 }

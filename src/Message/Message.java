@@ -13,6 +13,11 @@ public class Message implements Serializable {
 
     private PayLoad messagePayload;
 
+    public Message(MessageGroup messageGroup, PayLoad messagePayload) {
+        this.messageGroup = messageGroup;
+        this.messagePayload = messagePayload;
+    }
+
 //    public int getMessageLength() {return messageLength;}
 //    public void setMessageLength(int messageLength) {this.messageLength = messageLength;}
 

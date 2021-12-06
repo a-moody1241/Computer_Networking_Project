@@ -24,20 +24,17 @@ public class Logger {
         //the [Time] field represents the current time, which contains the date,
         //hour, minute, and second. The format of [Time] is up to you.
     }
-
     public static void peerConnectedFromPeer(int secondPeerID) {
         logFileWriter.println(getCurrentTime()+"Peer " + peerID + " is connected from Peer " + secondPeerID);
         logFileWriter.flush();
         //[Time]: Peer [peer_ID 1] is connected from Peer [peer_ID 2].
     }
-
     public static void changeOfPreferredNeighbors (ArrayList<Integer> neighbors) {
             logFileWriter.println(getCurrentTime()+"Peer " + peerID + " has the preferred neighbors " + neighbors);
             logFileWriter.flush();
             //[Time]: Peer [peer_ID] has the preferred neighbors [preferred neighbor ID list].
         //[preferred neighbor list] is the list of peer IDs separated by comma ‘,’.
     }
-
     public static void unchoking (int secondPeerID) {
         logFileWriter.println(getCurrentTime()+"Peer " + peerID + " is unchoked by " + secondPeerID);
         logFileWriter.flush();
@@ -71,7 +68,7 @@ public class Logger {
         //[Time]: Peer [peer_ID 1] has downloaded the piece [piece index] from [peer_ID 2].Now
         //the number of pieces it has is [number of pieces].
     }
-    public static void completionOfDownload  (int secondPeerID) {
+    public static void completionOfDownload  () {
         logFileWriter.println(getCurrentTime()+"Peer " + peerID + " has downloaded the complete file.");
         logFileWriter.flush();
         //[Time]: Peer [peer_ID] has downloaded the complete file.
