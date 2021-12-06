@@ -30,9 +30,9 @@ public class Logger {
         //[Time]: Peer [peer_ID 1] is connected from Peer [peer_ID 2].
     }
     public static void changeOfPreferredNeighbors (ArrayList<Integer> neighbors) {
-            logFileWriter.println(getCurrentTime()+"Peer " + peerID + " has the preferred neighbors " + neighbors);
-            logFileWriter.flush();
-            //[Time]: Peer [peer_ID] has the preferred neighbors [preferred neighbor ID list].
+        logFileWriter.println(getCurrentTime()+"Peer " + peerID + " has the preferred neighbors " + neighbors);
+        logFileWriter.flush();
+        //[Time]: Peer [peer_ID] has the preferred neighbors [preferred neighbor ID list].
         //[preferred neighbor list] is the list of peer IDs separated by comma ‘,’.
     }
     public static void unchoking (int secondPeerID) {
@@ -79,4 +79,4 @@ public class Logger {
         return (now.getYear() +"-"+ now.getMonthValue() +"-"+ now.getDayOfMonth() +" "+now.getHour()+":"+now.getMinute()+":"+now.getSecond()+"."+now.get(ChronoField.MILLI_OF_SECOND)+": ");
     }
 
-    }
+}

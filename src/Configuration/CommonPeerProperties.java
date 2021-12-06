@@ -12,7 +12,7 @@ public class CommonPeerProperties {
     private static int fileSize;
     private static int pieceSize;
 
-    public void read() {
+    public void getPeerProperties() {
         try {
             BufferedReader br = new BufferedReader(new FileReader(CONFIG_FILE));
             String line;
