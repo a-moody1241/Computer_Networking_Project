@@ -57,23 +57,23 @@ public class PeerManager extends Thread {
                                 });
                             }
                             Iterator<Peer> it = interestedPeers.iterator();
-                            int indexJ = 0;
-                            while (indexJ < CommonPeerProperties.getNumberOfPreferredNeighbors() && it.hasNext()) {
+                            int peersChecked = 0;
+                            while (peersChecked < CommonPeerProperties.getNumberOfPreferredNeighbors() && it.hasNext()) {
                                 Peer p = it.next();
                                 // chooses peer adds it to k preferred peers list and unchokes them
                                 p.getConnection().resetPiecesDownloaded();
                                 kNeighborPeers.add(p);
                                 if (!p.isUnChoked())
                                     unChokePeer(p);
-                                indexJ++;
+                                peersChecked++;
                             }
-                            ArrayList<Integer> preferredPeers = new ArrayList<Integer>();
-                            int indexI = 0;
-                            while (indexI < kNeighborPeers.size()) {
-                                preferredPeers.add(kNeighborPeers.get(indexI).getPeerID());
-                                indexI++;
+                            ArrayList<Integer> preferredPeersID = new ArrayList<Integer>();
+                            int preferredPeersChecked = 0;
+                            while (preferredPeersChecked < kNeighborPeers.size()) {
+                                preferredPeersID.add(kNeighborPeers.get(preferredPeersChecked).getPeerID());
+                                preferredPeersChecked++;
                             }
-                            Logger.changeOfPreferredNeighbors(preferredPeers);
+                            Logger.changeOfPreferredNeighbors(preferredPeersID);
                             chokePeers();
                         }
                     }
@@ -183,10 +183,8 @@ public class PeerManager extends Thread {
     public void unChokePeer(Peer p) {
 
         p.setUnChoked(true);
-        // send unchoke message to peer p
         Message msgUnchoke = new Message(MessageGroup.UNCHOKE, null);
         p.getConnection().sendMessage(msgUnchoke);
-        // log here or after receiving the message
         Logger.unchoking(p.getPeerID());
     }
 
