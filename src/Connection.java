@@ -73,11 +73,15 @@ public class Connection {
     public void receiveMessage() {
         new Thread() {
             public void run() {
+
                 Message receivedMsg = null;
                 boolean unChoke = false;
                 while (true) {
                     try {
                         receivedMsg = (Message) clientIn.readObject();
+                        //MessageGroup messageGroup
+                        //PayLoad messagePayload
+                        //clientIn
                         System.out.println("Received message type: " + receivedMsg.getMessageGroup() + " from: " + neighborPeer.getPeerID());
                         if (receivedMsg != null) {
                             switch (receivedMsg.getMessageGroup()) {
