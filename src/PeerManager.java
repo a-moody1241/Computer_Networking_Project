@@ -17,6 +17,14 @@ public class PeerManager extends Thread {
     private ServerSocket socketPort;
     private Peer hostPeer;
 
+    public HashMap<Integer, Peer> getPeers() {
+        return peers;
+    }
+
+    public void setPeers(HashMap<Integer, Peer> peers) {
+        this.peers = peers;
+    }
+
     // Stores the peer process objects in a map
     private HashMap<Integer, Peer> peers;
     private static ArrayList<Peer> interestedPeers = new ArrayList<Peer>();
@@ -219,16 +227,6 @@ public class PeerManager extends Thread {
         unChokeOptimisticPeer();
     }
 
-    public void sendHaveAll(int index) {
-        Message have = new Message(MessageGroup.HAVE, new Have_PayLoad(index));
-
-        Iterator<Entry<Integer, Peer>> itr = peers.entrySet().iterator();
-        while (itr.hasNext()) {
-            Entry<Integer, Peer> entry = itr.next();
-            Peer temp = entry.getValue();
-            temp.getConnection().sendMessage(have);
-        }
-    }
 
 
 }
