@@ -10,6 +10,7 @@ import java.io.ObjectOutputStream;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.Objects;
 
 public class Connection {
@@ -26,12 +27,26 @@ public class Connection {
         this.peer = peer;
         this.neighborPeer = neighborPeer;
 
-
         this.startConnection();
     }
 
-    public void startConnection(){
-        Thread sThread = new Thread(new ServerConnection(this.peer.getHostName(), this.peer.getPortNumber()))
+    public void startConnection() {
+        try {
+            Thread sThread = new Thread(new ServerConnection(this.peer, this));
+            sThread.start();
+
+            System.out.println("Creating a client for " + this.peer.getPeerID() + " to " + this.neighborPeer.getPeerID());
+            Socket cSocket = new Socket(this.neighborPeer.getHostName(), this.neighborPeer.getPortNumber());
+
+            ClientConnection newConnection = new ClientConnection(cSocket, this);
+            MessageManager m = new MessageManager(newConnection, this);
+            (new Thread(m)).start();
+
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void sendMessage(Message message) {
@@ -96,7 +111,7 @@ public class Connection {
                                     System.out.println("bitfield message");
                                     BitField_PayLoad bitField_payLoad = (BitField_PayLoad) receivedMsg.getMessagePayload();
                                     neighborPeer.setBitField(bitField_payLoad.getBitfield());
-                                    if (!FileManager.compareBitfields(bitField_payLoad.getBitfield(), clientPeer.getBitField())) {
+                                    if (!FileManager.compareBitfields(bitField_payLoad.getBitfield(), peer.getBitField())) {
                                         System.out.println("Peer " + neighborPeer.getPeerID() + " does not contain any interesting file pieces");
                                         Message notInterested = new Message(MessageGroup.NOT_INTERESTED, null);
                                         sendMessage(notInterested);
@@ -109,7 +124,7 @@ public class Connection {
                                 case PIECE:
                                     System.out.println("piece message");
                                     FileManager.store((Piece_PayLoad) receivedMsg.getMessagePayload());
-                                    clientPeer.setBitField(FileManager.getBitField());
+                                    peer.setBitField(FileManager.getBitField());
                                     pManager.sendHaveAll(((Piece_PayLoad) receivedMsg.getMessagePayload()).getIndex());
                                     piecesDownloaded++;
                                     Logger.downloadingAPiece(neighborPeer.getPeerID(), ((Piece_PayLoad) receivedMsg.getMessagePayload()).getIndex(), FileManager.getNoOfPiecesAvailable());
@@ -132,7 +147,7 @@ public class Connection {
 
             void sendRequest() {
                 System.out.println("in send request");
-                int pieceIdx = FileManager.requestPiece(neighborPeer.getBitField(),clientPeer.getBitField(),neighborPeer.getPeerID());
+                int pieceIdx = FileManager.requestPiece(neighborPeer.getBitField(),peer.getBitField(),neighborPeer.getPeerID());
                 if(pieceIdx == -1){
                     System.out.println("No more interesting pieces to request from peer " + neighborPeer.getPeerID());
                     Message not_interested = new Message(MessageGroup.NOT_INTERESTED, null);
@@ -153,11 +168,11 @@ public class Connection {
     }
 
     public Peer getClientPeer() {
-        return clientPeer;
+        return peer;
     }
 
     public void setClientPeer(Peer clientPeer) {
-        this.clientPeer = clientPeer;
+        this.peer = clientPeer;
     }
 
     public Peer getNeighborPeer() {

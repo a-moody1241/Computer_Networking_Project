@@ -1,7 +1,7 @@
 import Configuration.CommonPeerProperties;
 import Configuration.PeerObj;
 import Configuration.PeersInformation;
-import Connections.Connection;
+//import Connections.Connection;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -47,7 +47,7 @@ public class peerProcess {
         //input thread here
         System.out.println("Starting the process for peer " + callingPeer.getId());
         for (PeerObj connectingPeer : otherPeers) {
-             new Connection(socket, clientPeer, neighborPeer, );
+             new Connection(callingPeer, connectingPeer);
              //commonconfig, map of peers, peerid
         }
 
