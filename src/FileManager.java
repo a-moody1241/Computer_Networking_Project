@@ -34,8 +34,6 @@ public class FileManager { //todo fix all this
             FileOutputStream fos = null;
         }
     }
-
-
     public static int getFilePiecesAvailableCount() {
         return filePiecesAvailableCount;
     }
@@ -66,7 +64,6 @@ public class FileManager { //todo fix all this
         }
         return bitfield;
     }
-
     public static synchronized Piece_PayLoad get(int index) {
         try {
             FileInputStream fis = new FileInputStream(file);

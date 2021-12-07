@@ -22,6 +22,11 @@ public class Connection {
     private ObjectInputStream clientIn;
     private int piecesDownloaded;
     private PeerManager pManager;
+
+    public Map<Integer, Double> getDownloadRate() {
+        return downloadRate;
+    }
+
     private Map<Integer, Double> downloadRate; // peer id --> download rate
     private final long start_Download = 0;
     private long stop_Download;
@@ -205,6 +210,12 @@ public class Connection {
 
     public void resetPiecesDownloaded() {
         piecesDownloaded = 0;
+    }
+
+    public void run() {
+        receiveMessage();
+        FileManager.checker();
+        neighborPeer.setDownloadSpeed(piecesDownloaded);
     }
 
 

@@ -2,20 +2,16 @@
 import Configuration.CommonPeerProperties;
 import Message.Message;
 import Message.MessageGroup;
-import Message.Message_PayLoads.Have_PayLoad;
-
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
-import java.util.Map.Entry;
 
 public class PeerManager extends Thread {
 
-    //private ServerSocket socketPort;
     private Socket socketPort;
     private Peer hostPeer;
 
     private Vector<Peer>  peers = StartRemotePeers.getPeerInfo();
+
     private static ArrayList<Peer> interestedPeers = new ArrayList<Peer>();
     private static ArrayList<Peer> kNeighborPeers;
     private static Peer optimizedUnchokedPeer;
@@ -47,16 +43,16 @@ public class PeerManager extends Thread {
                     synchronized (interestedPeers) {
                         System.out.println("Finding k preferred peers");
                         if (interestedPeers.size() != 0) {
-                            kNeighborPeers = new ArrayList<Peer>();
+                            kNeighborPeers = new ArrayList<>();
                             if (!FileManager.hasCompleteFile()) {
                                 interestedPeers.sort(new Comparator<Peer>() {
                                     Random r = new Random();
 
                                     @Override
-                                    public int compare(Peer o1, Peer o2) {
-                                        if (o1.getDownloadSpeed() == o2.getDownloadSpeed())
+                                    public int compare(Peer p1, Peer p2) {
+                                        if (p1.getDownloadSpeed() == p2.getDownloadSpeed())
                                             return r.nextInt(2); // Randomly sequencing equal elements
-                                        return (int) -(o1.getDownloadSpeed() - o2.getDownloadSpeed());
+                                        return (int) -(p1.getDownloadSpeed() - p2.getDownloadSpeed());
                                     }
                                 });
                             }
@@ -211,6 +207,15 @@ public class PeerManager extends Thread {
         kPreferredPeers();
         unChokeOptimisticPeer();
     }
+
+    public  ArrayList<Peer> getInterestedPeers() {return interestedPeers;}
+    public static void setInterestedPeers(ArrayList<Peer> interestedPeers) {PeerManager.interestedPeers = interestedPeers;}
+
+    public static ArrayList<Peer> getkNeighborPeers() {return kNeighborPeers;}
+    public static void setkNeighborPeers(ArrayList<Peer> kNeighborPeers) {PeerManager.kNeighborPeers = kNeighborPeers;}
+
+    public static Peer getOptimizedUnchokedPeer() {return optimizedUnchokedPeer;}
+    public static void setOptimizedUnchokedPeer(Peer optimizedUnchokedPeer) {PeerManager.optimizedUnchokedPeer = optimizedUnchokedPeer;}
 
 
 
