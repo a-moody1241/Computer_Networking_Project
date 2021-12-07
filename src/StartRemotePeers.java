@@ -13,13 +13,14 @@ import java.util.Vector;
     startRemotePeers and this to start peerProcess
 
     What this does is read the PeerInfo config file to create the vector of peers. It then calls peerProcess for each peer
+
+    Add your ssh key to each of the hosts with "ssh-copy-id your-username@lin114-00.cise.ufl.edu". This will allow us to skip the password prompt at runtime.
  */
 
 public class StartRemotePeers {
 
     public static final String CONFIG_FILE = "PeerInfo.cfg";
     private static Vector<Peer> peerInfo = new Vector<Peer>();
-
 
     public void getConfiguration() {
         try {
