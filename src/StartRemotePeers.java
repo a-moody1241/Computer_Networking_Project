@@ -20,6 +20,15 @@ import java.util.Vector;
 public class StartRemotePeers {
 
     public static final String CONFIG_FILE = "PeerInfo.cfg";
+
+    public static Vector<Peer> getPeerInfo() {
+        return peerInfo;
+    }
+
+    public static void setPeerInfo(Vector<Peer> peerInfo) {
+        StartRemotePeers.peerInfo = peerInfo;
+    }
+
     private static Vector<Peer> peerInfo = new Vector<Peer>();
 
     public void getConfiguration() {

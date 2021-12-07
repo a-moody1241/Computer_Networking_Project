@@ -5,48 +5,36 @@ import Message.MessageGroup;
 import Message.Message_PayLoads.Have_PayLoad;
 
 import java.net.ServerSocket;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.net.Socket;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Random;
 
 public class PeerManager extends Thread {
 
-    private ServerSocket socketPort;
+    //private ServerSocket socketPort;
+    private Socket socketPort;
     private Peer hostPeer;
 
-    public HashMap<Integer, Peer> getPeers() {
-        return peers;
-    }
-
-    public void setPeers(HashMap<Integer, Peer> peers) {
-        this.peers = peers;
-    }
-
-    // Stores the peer process objects in a map
-    private HashMap<Integer, Peer> peers;
+    private Vector<Peer>  peers = StartRemotePeers.getPeerInfo();
     private static ArrayList<Peer> interestedPeers = new ArrayList<Peer>();
     private static ArrayList<Peer> kNeighborPeers;
     private static Peer optimizedUnchokedPeer;
 
-    public PeerManager(ServerSocket sSocket, Peer hostPeer, HashMap<Integer, Peer> peers) {
+    public PeerManager(Socket sSocket, Peer hostPeer) {
         super();
         this.socketPort = sSocket;
-        this.peers = peers;
         this.hostPeer = hostPeer;
     }
 
-    public void setSocketPort(ServerSocket socketPort) {
-        this.socketPort = socketPort;
-    }
+    //public void setSocketPort(ServerSocket socketPort) {
+//        this.socketPort = socketPort;
+//    }
 
-    public void add(Peer intPeers) {
+    public void addToInterestedPeers(Peer intPeers) {
         interestedPeers.add(intPeers);
     }
 
-    public void remove(Peer intPeers) {
+    public void removeFromInterestedPeers(Peer intPeers) {
         interestedPeers.remove(intPeers);
     }
 
@@ -208,10 +196,7 @@ public class PeerManager extends Thread {
 
     public void chokePeers() {
         // choke all other peers not in map kPeers
-        Iterator<Entry<Integer, Peer>> itr = peers.entrySet().iterator();
-        while (itr.hasNext()) {
-            Entry<Integer, Peer> entry = itr.next();
-            Peer temp = (Peer) entry.getValue();
+        for(Peer temp : peers){
             if (!kNeighborPeers.contains(temp) && temp != optimizedUnchokedPeer && temp.getConnection() != null) {
                 temp.setUnChoked(false);
                 Message chokeMsg = new Message(MessageGroup.CHOKE, null);

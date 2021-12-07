@@ -8,12 +8,8 @@ import Message.Message_PayLoads.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.ConnectException;
-import java.net.Socket;
-import java.net.SocketException;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 
@@ -36,6 +32,7 @@ public class Connection {
         this.peer = peer;
         this.neighborPeer = neighborPeer;
         this.downloadRate = new HashMap<Integer, Double>();
+        //pManager = new PeerManager()
         this.startConnection();
     }
 
@@ -45,11 +42,11 @@ public class Connection {
             sThread.start();
 
             System.out.println("Creating a client for " + this.peer.getPeerID() + " to " + this.neighborPeer.getPeerID());
-            Socket cSocket = new Socket("localhost", 8001);
-            //Socket cSocket = new Socket(this.neighborPeer.getHostName(), this.neighborPeer.getPortNumber());
+            Socket cSocket = new Socket(this.neighborPeer.getHostName(), this.neighborPeer.getPortNumber());
+            pManager = new PeerManager(cSocket, peer);
             ClientConnection newConnection = new ClientConnection(cSocket, this);
-            //MessageManager m = new MessageManager(newConnection, this);
-            //(new Thread(m)).start();
+            MessageManager m = new MessageManager(newConnection, this);
+            (new Thread(m)).start();
             //(new Thread(newConnection)).start();
             //receiveMessage();
 
@@ -100,12 +97,12 @@ public class Connection {
                                     break;
                                 case INTERESTED:
                                     System.out.println("interested message");
-                                    pManager.add(neighborPeer);
+                                    pManager.addToInterestedPeers(neighborPeer);
                                     Logger.receivingInterestedMessage(neighborPeer.getPeerID());
                                     break;
                                 case NOT_INTERESTED:
                                     System.out.println("not interested message");
-                                    pManager.remove(neighborPeer);
+                                    pManager.removeFromInterestedPeers(neighborPeer);
                                     Logger.receivingNotInterestedMessage(neighborPeer.getPeerID());
                                     break;
                                 case HAVE:
@@ -143,13 +140,9 @@ public class Connection {
                                     peer.setBitField(FileManager.getBitField());
 
                                     Message have = new Message(MessageGroup.HAVE, new Have_PayLoad(((Piece_PayLoad) receivedMsg.getMessagePayload()).getIndex()));
-                                    Iterator<Map.Entry<Integer, Peer>> iterator = pManager.getPeers().entrySet().iterator();
-                                    while (iterator.hasNext()){
-                                        Map.Entry<Integer, Peer> entry = iterator.next();
-                                        Peer temp = entry.getValue();
+                                    for (Peer temp: StartRemotePeers.getPeerInfo()){
                                         temp.getConnection().sendMessage(have);
                                     }
-                                    //pManager.sendHaveAll(((Piece_PayLoad) receivedMsg.getMessagePayload()).getIndex());
                                     piecesDownloaded++;
                                     stop_Download = System.currentTimeMillis();
                                     double downloadRateT = (double) CommonPeerProperties.getPieceSize() /(stop_Download -start_Download);
