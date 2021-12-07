@@ -7,13 +7,17 @@ public class ServerConnection implements Runnable {
     private Connection connection;
 
     public ServerConnection(Peer peer, Connection connection) {
+        System.out.println("In server connection");
         try {
-            this.listener = new ServerSocket(peer.getPortNumber());
+            System.out.println(peer.getPortNumber());
+            //this.listener = new ServerSocket(peer.getPortNumber());
+            this.listener = new ServerSocket(8001);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         this.connection = connection;
-        Logger.peerToPeerMakesTCPConnection(connection.getNeighborPeer().getPeerID());
+        //Logger.peerToPeerMakesTCPConnection(connection.getNeighborPeer().getPeerID());
         System.out.println("Server is open");
     }
 

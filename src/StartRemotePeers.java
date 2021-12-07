@@ -1,4 +1,5 @@
 
+import Configuration.CommonPeerProperties;
 import sun.security.pkcs.ParsingException;
 
 import java.io.BufferedReader;
@@ -14,10 +15,10 @@ import java.util.Vector;
     What this does is read the PeerInfo config file to create the vector of peers. It then calls peerProcess for each peer
  */
 
-public class PeersInformation {
+public class StartRemotePeers {
 
     public static final String CONFIG_FILE = "PeerInfo.cfg";
-    private final Vector<Peer> peerInfo = new Vector<Peer>();
+    private static Vector<Peer> peerInfo = new Vector<Peer>();
 
 
     public void getConfiguration() {
@@ -52,6 +53,8 @@ public class PeersInformation {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        System.out.println("We just finished reading the peerInfo config file");
     }
 
     public Vector<Peer> getPeerInformation() {
@@ -60,9 +63,14 @@ public class PeersInformation {
 
     //Dylan's stuff
     public static void main(String[] args) {
+        System.out.println("Hello, welcome to main of StartRemotePeers\n");
         try {
-            PeersInformation myStart = new PeersInformation();
+            CommonPeerProperties cpp = new CommonPeerProperties();
+            cpp.getPeerProperties();
+
+            StartRemotePeers myStart = new StartRemotePeers();
             myStart.getConfiguration();
+
             Vector<Peer> peerInfoVector = myStart.getPeerInformation();
 
             // get current path
@@ -70,11 +78,13 @@ public class PeersInformation {
 
             // start clients at remote hosts
             for (int i = 0; i < peerInfoVector.size(); i++) {
+                System.out.println("\n");
                 Peer pInfo = peerInfoVector.elementAt(i);
                 System.out.println("Start remote peer " + pInfo.getPeerID() +  " at " + pInfo.getHostName() );
-                Runtime.getRuntime().exec("ssh " + pInfo.getHostName() + " cd " + path + "; java peerProcess " + pInfo.getPeerID());
+                //Runtime.getRuntime().exec("ssh " + pInfo.getHostName() + " cd " + path + "; java peerProcess " + pInfo.getPeerID());
+                peerProcess.main(new String[]{Integer.toString(pInfo.getPeerID())});
             }
-            System.out.println("Starting all remote peers has done." );
+            System.out.println("\n\nStarting all remote peers has done." );
         } catch (Exception ex) {
             System.out.println(ex);
         }
