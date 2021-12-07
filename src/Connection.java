@@ -51,7 +51,6 @@ public class Connection {
             //(new Thread(m)).start();
             //(new Thread(newConnection)).start();
             //receiveMessage();
-
         } catch (UnknownHostException e) {
             e.printStackTrace();
         } catch (IOException e) {

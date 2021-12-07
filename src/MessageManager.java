@@ -25,10 +25,14 @@ public class MessageManager implements Runnable {
         }
     }
 
+
     @Override
     public void run() {
         this.sendHandshake(peerID);
         this.receiveHandshake();
+
+        //sendBitfield()
+        //sendMessage
         //(new Thread(clientConnection)).start();
         //this.processData();
         try {
@@ -66,4 +70,32 @@ public class MessageManager implements Runnable {
     private void processData() {
         //this is just receiveMessage in COnnection
     }
+
+   // class RequestMessage implements Runnable
+    //{
+        private void sendRequestMessage() throws IOException, InterruptedException
+        {
+            int desiredPiece = myBitMap.getPeerPieceIndex(connectedToID);
+            if(desiredPiece != -1)
+            {
+                myClient.send((new RequestMessage(desiredPiece)).getFullMessage());
+            }
+        }
+
+      /*  @Override
+        public void run()
+        {
+            while(! myBitMap.canIQuit())
+            {
+                try
+                {
+                    this.sendRequestMessage();
+                    Thread.sleep(5);
+                } catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }*/
+    //}
 }
