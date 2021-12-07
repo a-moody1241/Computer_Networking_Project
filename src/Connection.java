@@ -1,4 +1,5 @@
 
+import Configuration.CommonPeerProperties;
 import Configuration.PeerObj;
 import Message.Message;
 import Message.MessageGroup;
@@ -11,6 +12,8 @@ import java.net.ConnectException;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class Connection {
@@ -22,11 +25,15 @@ public class Connection {
     private ObjectInputStream clientIn;
     private int piecesDownloaded;
     private PeerManager pManager;
+    private Map<Integer, Double> downloadRate; // peer id --> download rate
+    private final long start_Download = 0;
+    private long stop_Download;
+
 
     public Connection(Peer peer, Peer neighborPeer) {
         this.peer = peer;
         this.neighborPeer = neighborPeer;
-
+        this.downloadRate = new HashMap<Integer, Double>();
         this.startConnection();
     }
 
@@ -74,15 +81,26 @@ public class Connection {
                         System.out.println("Received message type: " + receivedMsg.getMessageGroup() + " from: " + neighborPeer.getPeerID());
                         if (receivedMsg != null) {
                             switch (receivedMsg.getMessageGroup()) {
+                                case CHOKE:
+                                    System.out.println("choked message");
+                                    Logger.choking(neighborPeer.getPeerID());
+                                    downloadRate.put(neighborPeer.getPeerID(), 0.0);
+                                    break;
                                 case UNCHOKE:
                                     System.out.println("unchoked message");
                                     unChoke = true;
                                     Logger.unchoking(neighborPeer.getPeerID());
                                     sendRequest();
                                     break;
-                                case CHOKE:
-                                    System.out.println("choked message");
-                                    Logger.choking(neighborPeer.getPeerID());
+                                case INTERESTED:
+                                    System.out.println("interested message");
+                                    pManager.add(neighborPeer);
+                                    Logger.receivingInterestedMessage(neighborPeer.getPeerID());
+                                    break;
+                                case NOT_INTERESTED:
+                                    System.out.println("not interested message");
+                                    pManager.remove(neighborPeer);
+                                    Logger.receivingNotInterestedMessage(neighborPeer.getPeerID());
                                     break;
                                 case HAVE:
                                     System.out.println("have message");
@@ -94,20 +112,6 @@ public class Connection {
                                         Message interested = new Message(MessageGroup.INTERESTED, null);
                                         sendMessage(interested);
                                     }
-                                    break;
-                                case REQUEST:
-                                    System.out.println("request message");
-                                    sendMessage(new Message(MessageGroup.PIECE, new Piece_PayLoad(Objects.requireNonNull(FileManager.get(((Request_PayLoad) receivedMsg.getMessagePayload()).getIndex())).getContent(), Objects.requireNonNull(FileManager.get(((Request_PayLoad) receivedMsg.getMessagePayload()).getIndex())).getIndex())));
-                                    break;
-                                case INTERESTED:
-                                    System.out.println("interested message");
-                                    pManager.add(neighborPeer);
-                                    Logger.receivingInterestedMessage(neighborPeer.getPeerID());
-                                    break;
-                                case NOT_INTERESTED:
-                                    System.out.println("not interested message");
-                                    pManager.remove(neighborPeer);
-                                    Logger.receivingNotInterestedMessage(neighborPeer.getPeerID());
                                     break;
                                 case BITFIELD:
                                     System.out.println("bitfield message");
@@ -123,12 +127,20 @@ public class Connection {
                                     Message interested = new Message(MessageGroup.INTERESTED, null);
                                     sendMessage(interested);
                                     break;
+                                case REQUEST:
+                                    System.out.println("request message");
+                                    sendMessage(new Message(MessageGroup.PIECE, new Piece_PayLoad(Objects.requireNonNull(FileManager.get(((Request_PayLoad) receivedMsg.getMessagePayload()).getIndex())).getContent(), Objects.requireNonNull(FileManager.get(((Request_PayLoad) receivedMsg.getMessagePayload()).getIndex())).getIndex())));
+                                    break;
                                 case PIECE:
                                     System.out.println("piece message");
                                     FileManager.store((Piece_PayLoad) receivedMsg.getMessagePayload());
                                     peer.setBitField(FileManager.getBitField());
                                     pManager.sendHaveAll(((Piece_PayLoad) receivedMsg.getMessagePayload()).getIndex());
                                     piecesDownloaded++;
+                                    stop_Download = System.currentTimeMillis();
+                                    double downloadRateT = (double) CommonPeerProperties.getPieceSize() /(stop_Download -start_Download);
+                                    downloadRate.put(neighborPeer.getPeerID(), downloadRateT);
+
                                     Logger.downloadingAPiece(neighborPeer.getPeerID(), ((Piece_PayLoad) receivedMsg.getMessagePayload()).getIndex(), FileManager.getFilePiecesAvailableCount());
                                     if (FileManager.getFilePiecesCompletedCount() == FileManager.getFilePiecesCompletedCount()) {
                                         Logger.completionOfDownload();
@@ -139,9 +151,9 @@ public class Connection {
                                     break;
                             }
                         }
-                    } catch (SocketException e){
+                    } catch (SocketException e) {
                         neighborPeer.setPeerUp(false);
-                    }catch (Exception e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -149,19 +161,19 @@ public class Connection {
 
             void sendRequest() {
                 System.out.println("in send request");
-                int pieceIdx = FileManager.requestPiece(neighborPeer.getBitField(),peer.getBitField(),neighborPeer.getPeerID());
-                if(pieceIdx == -1){
+                int pieceIdx = FileManager.requestPiece(neighborPeer.getBitField(), peer.getBitField(), neighborPeer.getPeerID());
+                if (pieceIdx == -1) {
                     System.out.println("No more interesting pieces to request from peer " + neighborPeer.getPeerID());
                     Message not_interested = new Message(MessageGroup.NOT_INTERESTED, null);
                     sendMessage(not_interested);
                     return;
                 }
                 PayLoad requestPayload = new Request_PayLoad(pieceIdx);
-                Message msgRequest = new Message(MessageGroup.REQUEST,requestPayload);
-                try{
+                Message msgRequest = new Message(MessageGroup.REQUEST, requestPayload);
+                try {
                     out.writeObject(msgRequest);
                     out.flush();
-                }catch (IOException e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
@@ -188,4 +200,6 @@ public class Connection {
     public void resetPiecesDownloaded() {
         piecesDownloaded = 0;
     }
+
+
 }

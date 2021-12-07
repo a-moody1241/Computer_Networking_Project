@@ -68,6 +68,7 @@ public class PeersInformation {
                 System.out.println("Start remote peer " + pInfo.getId() +  " at " + pInfo.getPeerAddress() );
                 Runtime.getRuntime().exec("ssh " + pInfo.getPeerAddress() + " cd " + path + "; java peerProcess " + pInfo.getId());
             }
+
             System.out.println("Starting all remote peers has done." );
         } catch (Exception ex) {
             System.out.println(ex);
