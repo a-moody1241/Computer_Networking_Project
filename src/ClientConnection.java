@@ -25,8 +25,8 @@ public class ClientConnection implements Runnable {
         try {
             byte[] b = new byte[4];
             in.readFully(b);
-            int i = Utilities.getInteger_From_Byte(b, 0);
-            pipedOutputStream.write(Utilities.getBytes(i));
+            int i = FileUtilities.byteArrToInt(b,0);
+            pipedOutputStream.write(FileUtilities.intToByteArr(i));
 
             byte[] c = new byte[i];
             in.readFully(c);

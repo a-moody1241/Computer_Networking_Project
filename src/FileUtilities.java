@@ -1,3 +1,5 @@
+import java.nio.ByteBuffer;
+
 public class FileUtilities {
     public static byte booleanArrToByte(boolean[] arr) {
         byte val = 0;
@@ -56,6 +58,14 @@ public class FileUtilities {
                 return false;
         }
         return true;
+    }
+
+    public static int byteArrToInt(byte[] arr, int index) {
+        return ByteBuffer.wrap(arr,index,4).getInt();
+    }
+
+    public static byte[] intToByteArr(int number){
+       return ByteBuffer.allocate(4).putInt(number).array();
     }
 
 }
