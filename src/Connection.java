@@ -44,13 +44,12 @@ public class Connection {
             sThread.start();
 
             System.out.println("Creating a client for " + this.peer.getPeerID() + " to " + this.neighborPeer.getPeerID());
-            Socket cSocket = new Socket("localhost", 8001);
-            //Socket cSocket = new Socket(this.neighborPeer.getHostName(), this.neighborPeer.getPortNumber());
+            Socket cSocket = new Socket(this.neighborPeer.getHostName(), this.neighborPeer.getPortNumber());
             ClientConnection newConnection = new ClientConnection(cSocket, this);
-            //MessageManager m = new MessageManager(newConnection, this);
-            //(new Thread(m)).start();
-            //(new Thread(newConnection)).start();
-            //receiveMessage();
+            MessageManager m = new MessageManager(newConnection, this);
+            (new Thread(m)).start();
+            (new Thread(newConnection)).start();
+            receiveMessage();
 
         } catch (UnknownHostException e) {
             e.printStackTrace();
@@ -193,6 +192,15 @@ public class Connection {
     public void setClientPeer(Peer clientPeer) {
         this.peer = clientPeer;
     }
+
+    // get/set methods for ClientIn ObjectInputStream
+    public ObjectInputStream getClientIn() {
+        return clientIn;
+    }
+    public void setClientIn(ObjectInputStream clientIn) {
+        this.clientIn = clientIn;
+    }
+
 
     public Peer getNeighborPeer() {
         return neighborPeer;

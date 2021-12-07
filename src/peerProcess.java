@@ -12,7 +12,7 @@ public class peerProcess {
         StartRemotePeers peersInformation = new StartRemotePeers();
         peersInformation.getPeerInformation();
 
-        System.out.println("finished cpp and pi");
+        System.out.println("finished cpp and PeerInfo");
 
         int peerID = Integer.parseInt(args[0]);
         new Logger(peerID);

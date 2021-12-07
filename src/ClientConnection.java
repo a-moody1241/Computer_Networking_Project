@@ -23,6 +23,7 @@ public class ClientConnection implements Runnable {
            this.connection = connection;
            this.out = new ObjectOutputStream(cSocket.getOutputStream());
            this.in = new ObjectInputStream(cSocket.getInputStream());
+           this.connection.setClientIn(this.in);
        } catch (ConnectException e) {
             System.err.println("Connections.Connection refused. You need to initiate a server first.");
         } catch (IOException o){
