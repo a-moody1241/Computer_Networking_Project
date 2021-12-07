@@ -24,12 +24,12 @@ public class ClientConnection implements Runnable {
            this.out = new ObjectOutputStream(cSocket.getOutputStream());
            this.in = new ObjectInputStream(cSocket.getInputStream());
            this.connection.setClientIn(this.in);
-       } catch (ConnectException e) {
-            System.err.println("Connections.Connection refused. You need to initiate a server first.");
+           System.out.println("Client server is running");
+        } catch (ConnectException e) {
+            System.err.println("Connection refused. You need to initiate a server first.");
         } catch (IOException o){
-            System.err.println("error");
+            o.printStackTrace();
         }
-        System.out.println("Client server is running");
     }
     public void receive(){
         try {

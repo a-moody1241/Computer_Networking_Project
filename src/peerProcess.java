@@ -24,6 +24,7 @@ public class peerProcess {
             for (Peer peer : peers) {
                 if (peerID == peer.getPeerID()) {
                     callingPeer = peer;
+                    System.out.println("Peer found!");
                     break;
                 } else {
                     otherPeers.addElement(peer);
