@@ -2,6 +2,7 @@
 import sun.security.pkcs.ParsingException;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Vector;
@@ -19,30 +20,38 @@ public class PeersInformation {
     private final Vector<Peer> peerInfo = new Vector<Peer>();
 
 
-    public void getConfiguration() throws IOException {
-        BufferedReader br = new BufferedReader(new FileReader(CONFIG_FILE));
-        String line;
-        boolean hasFile = true;
-        while ((line = br.readLine()) != null) {
-            line = line.trim();
-            if ( (line.length() == 0)) {
-                continue;
+    public void getConfiguration() {
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(CONFIG_FILE));
+            String line;
+            boolean hasFile = true;
+            while ((line = br.readLine()) != null) {
+                line = line.trim();
+                if ((line.length() == 0)) {
+                    continue;
+                }
+
+                String[] items = line.split("\\s+");
+                if (items.length != 4) {
+                    throw new ParsingException(line);
+                }
+
+                if (items[3].trim().equals("0")) {
+                    hasFile = false;
+                }
+
+                Peer peer = new Peer(Integer.parseInt(items[0].trim()), items[1].trim(), Integer.parseInt(items[2].trim()), hasFile);
+                peerInfo.addElement(peer);
+
             }
-
-            String[] items = line.split("\\s+");
-            if (items.length != 4){
-                throw new ParsingException(line);
-            }
-
-            if(items[3].trim().equals("0")){
-                hasFile = false;
-            }
-
-            Peer peer = new Peer(Integer.parseInt(items[0].trim()), items[1].trim(), Integer.parseInt(items[2].trim()), hasFile);
-            peerInfo.addElement(peer);
-
+            br.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (ParsingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        br.close();
     }
 
     public Vector<Peer> getPeerInformation() {

@@ -127,8 +127,10 @@ public class Client {
 	//main method
 	public static void main(String args[])
 	{
-		Client client = new Client();
-		client.run();
+		peerProcess.main(new String[]{"1001"});
+
+		//Client client = new Client();
+		//client.run();
 	}
 
 }

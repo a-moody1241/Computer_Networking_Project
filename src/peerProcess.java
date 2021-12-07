@@ -12,8 +12,12 @@ public class peerProcess {
     public static void main(String[] args) {
         CommonPeerProperties cpp = new CommonPeerProperties();
         PeersInformation peersInformation = new PeersInformation();
+        peersInformation.getConfiguration();
+        peersInformation.getPeerInformation();
         cpp.getPeerProperties();
 
+        System.out.println("finished cpp and pi");
+        System.out.println(peersInformation.getPeerInformation().get(0).getPeerID());
 
         int peerID = Integer.parseInt(args[0]);
         Peer callingPeer = null;
@@ -44,7 +48,7 @@ public class peerProcess {
         //input thread here
         System.out.println("Starting the process for peer " + callingPeer.getPeerID());
         for (Peer connectingPeer : otherPeers) {
-             new Connection(callingPeer, connectingPeer);
+             //new Connection(callingPeer, connectingPeer);
              //commonconfig, map of peers, peerid
         }
 

@@ -46,6 +46,8 @@ public class CommonPeerProperties {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.out.println(getNumberOfPreferredNeighbors() + " " + getUnchokingInterval() + " "
+                + getOptimisticUnchokingInterval() + " " + getFileName() + " " + getFileSize() + " " + getPieceSize());
     }
 
     public  String getConfigFile() { return CONFIG_FILE; }

@@ -33,7 +33,7 @@ public class ClientConnection implements Runnable {
             pipedOutputStream.write(c);
 
             pipedOutputStream.flush();
-            clientBlocker();
+            //clientBlocker();
 
         } catch (IOException e) {
             e.printStackTrace();
