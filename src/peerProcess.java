@@ -8,8 +8,13 @@ import java.util.Vector;
 public class peerProcess {
 
     public static void main(String[] args) throws IOException {
+        CommonPeerProperties cpp = new CommonPeerProperties();
+        cpp.getPeerProperties();
+
+
         Vector<Peer> otherPeers = new Vector<Peer>();
         StartRemotePeers peersInformation = new StartRemotePeers();
+        peersInformation.getConfiguration();
         peersInformation.getPeerInformation();
 
         System.out.println("finished cpp and pi");
@@ -32,8 +37,10 @@ public class peerProcess {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        System.out.println("finished creating other elements");
         peerProcess p = new peerProcess();
         assert callingPeer != null;
+        System.out.println(callingPeer.getPeerID());
         p.startProcess(callingPeer, otherPeers);
 
     }

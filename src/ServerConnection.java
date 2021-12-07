@@ -10,8 +10,8 @@ public class ServerConnection implements Runnable {
         System.out.println("In server connection");
         try {
             System.out.println(peer.getPortNumber());
-            //this.listener = new ServerSocket(peer.getPortNumber());
-            this.listener = new ServerSocket(8001);
+            this.listener = new ServerSocket(peer.getPortNumber());
+            //this.listener = new ServerSocket(8001);
         } catch (IOException e) {
             e.printStackTrace();
         }

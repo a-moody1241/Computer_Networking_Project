@@ -83,7 +83,7 @@ public class StartRemotePeers {
                 System.out.println("\n");
                 Peer pInfo = peerInfoVector.elementAt(i);
                 System.out.println("Start remote peer " + pInfo.getPeerID() +  " at " + pInfo.getHostName() );
-                //Runtime.getRuntime().exec("ssh " + pInfo.getHostName() + " cd " + path + "; java peerProcess " + pInfo.getPeerID());
+                Runtime.getRuntime().exec("ssh anna.moody@" + pInfo.getHostName() + " cd " + path + "; java Computer_Networking_Project/src/peerProcess " + pInfo.getPeerID());
 
                 peerProcess.main(new String[]{Integer.toString(pInfo.getPeerID())});
             }

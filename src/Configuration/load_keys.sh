@@ -5,5 +5,5 @@
 # Lastly, change the username from 'd.hawley' to your Gatorlink username.
 
 for server in `cat server.txt`;  do
-    ssh-copy-id -f -i ~/.ssh/id_ed25519.pub d.hawley@$server  
+    ssh-copy-id -f -i C:\Users\swimg/.ssh/id_rsa.pub anna.moody@$server
 done
