@@ -8,27 +8,26 @@ import Message.Message_PayLoads.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.ConnectException;
-import java.net.Socket;
-import java.net.SocketException;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 
-public class Connection {
+public class Connection implements Runnable{
 
     private Peer peer;
     private Peer neighborPeer;
     private ObjectOutputStream out;
     private ObjectInputStream in;
     private ObjectInputStream clientIn;
+    private ServerSocket serverSocket;
     private int piecesDownloaded;
     private PeerManager pManager;
     private Map<Integer, Double> downloadRate; // peer id --> download rate
     private final long start_Download = 0;
     private long stop_Download;
+    private peerProcess peerProcess;
 
 
     public Connection(Peer peer, Peer neighborPeer) {
@@ -36,25 +35,26 @@ public class Connection {
         this.peer = peer;
         this.neighborPeer = neighborPeer;
         this.downloadRate = new HashMap<Integer, Double>();
-        this.startConnection();
     }
 
-    public void startConnection() {
+    public void startConnection(Connection connection) {
         try {
-            Thread sThread = new Thread(new ServerConnection(this.peer, this));
-            sThread.start();
+            //Thread sThread = new Thread(new ServerConnection(this.peer, this));
+            //sThread.start();
 
             System.out.println("Creating a client for " + this.peer.getPeerID() + " to " + this.neighborPeer.getPeerID());
             //Socket cSocket = new Socket("localhost", 8001);
-            Socket cSocket = new Socket(this.neighborPeer.getHostName(), this.neighborPeer.getPortNumber());
-            ClientConnection newConnection = new ClientConnection(cSocket, this);
-            MessageManager m = new MessageManager(newConnection, this);
-            (new Thread(m)).start();
+           // Socket cSocket = new Socket(this.neighborPeer.getHostName(), this.neighborPeer.getPortNumber());
+            //ClientConnection newConnection = new ClientConnection(cSocket, this);
+            //MessageManager m = new MessageManager(newConnection, this);
+            //(new Thread(m)).start();
             //(new Thread(newConnection)).start();
             //receiveMessage();
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+
+            Thread t = new Thread(connection);
+            t.start();
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -220,5 +220,45 @@ public class Connection {
     }
     public void setClientIn(ObjectInputStream clientIn) {
         this.clientIn = clientIn;
+    }
+
+    public void startServer() {
+        (new Thread() {
+            @Override
+            public void run() {
+                while(!serverSocket.isClosed()){
+                    try{
+                        Socket connectingSocket = serverSocket.accept();
+                        ObjectOutputStream out = new ObjectOutputStream(connectingSocket.getOutputStream());
+                        out.flush();
+                        ObjectInputStream in = new ObjectInputStream(connectingSocket.getInputStream());
+
+                        handshake receiving = (handshake) in.readObject();
+                        int neighborID = receiving.getPeerID();
+
+                        System.out.println("Received handshake from " + neighborID);
+                        Logger.peerToPeerMakesTCPConnection(neighborID);
+
+                        //this is where i am
+                    } catch (IOException | ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        })
+    }
+
+    @Override
+    public void run() {
+        System.out.println("Starting peer " + this.getClientPeer().getPeerID());
+        try {
+            serverSocket = new ServerSocket(this.getClientPeer().getPortNumber());
+            System.out.println("Server socket created for " + this.getClientPeer().getHostName());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        startServer();
+        startSender()
     }
 }

@@ -48,9 +48,12 @@ public class peerProcess {
     public void startProcess(Peer callingPeer, Vector<Peer> otherPeers) throws IOException {
         //input thread here
         System.out.println("Starting the process for peer " + callingPeer.getPeerID());
-        new FileManager(callingPeer.getPeerID(),callingPeer.getFilePresent());
+        new FileManager(callingPeer.getPeerID(), callingPeer.getFilePresent());
         for (Peer connectingPeer : otherPeers) {
-             new Connection(callingPeer, connectingPeer);
+            Connection newConnection = new Connection(callingPeer, connectingPeer);
+            connectingPeer.setConnection(newConnection);
+
+            newConnection.startConnection(newConnection);
         }
 
 
@@ -68,6 +71,5 @@ public class peerProcess {
         }
         return clientSocket;
     }
-
 
 }
