@@ -19,6 +19,7 @@ public class ClientConnection implements Runnable {
         System.out.println("Client server is.....");
 
         try {
+
            this.cSocket = cSocket;
            this.connection = connection;
            this.out = new ObjectOutputStream(cSocket.getOutputStream());

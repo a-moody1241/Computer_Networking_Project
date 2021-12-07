@@ -25,22 +25,24 @@ public class MessageManager implements Runnable {
         }
     }
 
+
     @Override
     public void run() {
         this.sendHandshake(peerID);
         this.receiveHandshake();
-        //(new Thread(clientConnection)).start();
-        //this.processData();
+
         try {
-            BitField_PayLoad bitField_payLoad= new BitField_PayLoad(FileManager.getBitField());
+            BitField_PayLoad bitField_payLoad = new BitField_PayLoad(FileManager.getBitField());
             Message message = new Message(MessageGroup.BITFIELD, bitField_payLoad);
             this.connection.sendMessage(message);
+
+            this.connection.receiveMessage(); //this is the same as processData
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void sendHandshake(int peerID){
+    private void sendHandshake(int peerID) {
         byte[] handshakeMsg = handshake.createHandshake(peerID);
         clientConnection.send(handshakeMsg);
     }
@@ -63,7 +65,5 @@ public class MessageManager implements Runnable {
         }
     }
 
-    private void processData() {
-        //this is just receiveMessage in COnnection
-    }
+
 }
