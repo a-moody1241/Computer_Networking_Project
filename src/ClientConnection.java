@@ -21,11 +21,29 @@ public class ClientConnection implements Runnable {
        }
         System.out.println("Client server is running");
     }
-    private void receive(){
+    public void receive(){
         try {
             byte[] b = new byte[4];
             in.readFully(b);
-            //int i = Utilities.getInte
+            int i = Utilities.getInteger_From_Byte(b, 0);
+            pipedOutputStream.write(Utilities.getBytes(i));
+
+            byte[] c = new byte[i];
+            in.readFully(c);
+            pipedOutputStream.write(c);
+
+            pipedOutputStream.flush();
+            clientBlocker();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public void receive(int length){
+        try {
+            byte[] b = new byte[length];
+            in.readFully(b);
+            pipedOutputStream.write(b);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -48,6 +66,8 @@ public class ClientConnection implements Runnable {
         while(true){
             try{
                 this.receive();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }

@@ -104,8 +104,4 @@ public class Peer {
 
 }
 
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
 

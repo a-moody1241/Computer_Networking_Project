@@ -41,6 +41,8 @@ public class Connection {
             ClientConnection newConnection = new ClientConnection(cSocket, this);
             MessageManager m = new MessageManager(newConnection, this);
             (new Thread(m)).start();
+            (new Thread(newConnection)).start();
+            receiveMessage();
 
         } catch (UnknownHostException e) {
             e.printStackTrace();
