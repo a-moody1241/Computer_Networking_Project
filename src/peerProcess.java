@@ -1,7 +1,4 @@
 import Configuration.CommonPeerProperties;
-import Configuration.PeerObj;
-import Configuration.PeersInformation;
-//import Connections.Connection;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -9,24 +6,23 @@ import java.net.UnknownHostException;
 import java.util.Vector;
 
 public class peerProcess {
-    private static Vector<PeerObj> otherPeers = new Vector<PeerObj>();
+    private static Vector<Peer> otherPeers = new Vector<Peer>();
 
 
     public static void main(String[] args) {
-        //args is equal to that peer's ID
         CommonPeerProperties cpp = new CommonPeerProperties();
         PeersInformation peersInformation = new PeersInformation();
         cpp.getPeerProperties();
 
 
         int peerID = Integer.parseInt(args[0]);
-        PeerObj callingPeer = null;
+        Peer callingPeer = null;
 
-        Vector<PeerObj> peers = new Vector<>();
+        Vector<Peer> peers = new Vector<>();
         try {
             peers = peersInformation.getPeerInformation();
-            for (PeerObj peer : peers) {
-                if (peerID == peer.getId()) {
+            for (Peer peer : peers) {
+                if (peerID == peer.getPeerID()) {
                     callingPeer = peer;
                     break;
                 } else {
@@ -36,7 +32,7 @@ public class peerProcess {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        System.out.println("In peerProcess: added the previous peers to a vector");
         peerProcess p = new peerProcess();
         assert callingPeer != null;
         p.startProcess(callingPeer, otherPeers);
@@ -44,22 +40,22 @@ public class peerProcess {
 
     }
 
-    public void startProcess(PeerObj callingPeer, Vector<PeerObj> otherPeers) {
+    public void startProcess(Peer callingPeer, Vector<Peer> otherPeers) {
         //input thread here
-        System.out.println("Starting the process for peer " + callingPeer.getId());
-        for (PeerObj connectingPeer : otherPeers) {
-             //new Connection(callingPeer, connectingPeer);
+        System.out.println("Starting the process for peer " + callingPeer.getPeerID());
+        for (Peer connectingPeer : otherPeers) {
+             new Connection(callingPeer, connectingPeer);
              //commonconfig, map of peers, peerid
         }
 
 
     }
 
-    public static Socket initializePeer(PeerObj callingPeer) {
+    public static Socket initializePeer(Peer callingPeer) {
         Socket clientSocket = null;
         try {
-            clientSocket = new Socket(callingPeer.getPeerAddress(), callingPeer.getPeerPort());
-            System.out.println("Socket created for Peer " + callingPeer.getId());
+            clientSocket = new Socket(callingPeer.getHostName(), callingPeer.getPortNumber());
+            System.out.println("Socket created for Peer " + callingPeer.getPeerID());
         } catch (UnknownHostException e) {
             e.printStackTrace();
         } catch (IOException e) {

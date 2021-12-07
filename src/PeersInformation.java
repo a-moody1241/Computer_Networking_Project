@@ -1,4 +1,3 @@
-package Configuration;
 
 import sun.security.pkcs.ParsingException;
 
@@ -17,7 +16,7 @@ import java.util.Vector;
 public class PeersInformation {
 
     public static final String CONFIG_FILE = "PeerInfo.cfg";
-    private final Vector<PeerObj> peerInfo = new Vector<PeerObj>();
+    private final Vector<Peer> peerInfo = new Vector<Peer>();
 
 
     public void getConfiguration() throws IOException {
@@ -39,17 +38,15 @@ public class PeersInformation {
                 hasFile = false;
             }
 
-            //PeerObj(id, address, port, hasfile)
-            PeerObj peer = new PeerObj(items[0].trim(), items[1].trim(), items[2].trim(), hasFile);
-
+            Peer peer = new Peer(Integer.parseInt(items[0].trim()), items[1].trim(), Integer.parseInt(items[2].trim()), hasFile);
             peerInfo.addElement(peer);
 
         }
         br.close();
     }
 
-    public Vector<PeerObj> getPeerInformation() {
-        return new Vector<PeerObj>(peerInfo);
+    public Vector<Peer> getPeerInformation() {
+        return new Vector<Peer>(peerInfo);
     }
 
     //Dylan's stuff
@@ -57,16 +54,16 @@ public class PeersInformation {
         try {
             PeersInformation myStart = new PeersInformation();
             myStart.getConfiguration();
-            Vector<PeerObj> peerInfoVector = myStart.getPeerInformation();
+            Vector<Peer> peerInfoVector = myStart.getPeerInformation();
 
             // get current path
             String path = System.getProperty("user.dir");
 
             // start clients at remote hosts
             for (int i = 0; i < peerInfoVector.size(); i++) {
-                PeerObj pInfo = peerInfoVector.elementAt(i);
-                System.out.println("Start remote peer " + pInfo.getId() +  " at " + pInfo.getPeerAddress() );
-                Runtime.getRuntime().exec("ssh " + pInfo.getPeerAddress() + " cd " + path + "; java peerProcess " + pInfo.getId());
+                Peer pInfo = peerInfoVector.elementAt(i);
+                System.out.println("Start remote peer " + pInfo.getPeerID() +  " at " + pInfo.getHostName() );
+                Runtime.getRuntime().exec("ssh " + pInfo.getHostName() + " cd " + path + "; java peerProcess " + pInfo.getPeerID());
             }
             System.out.println("Starting all remote peers has done." );
         } catch (Exception ex) {
