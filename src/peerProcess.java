@@ -22,7 +22,7 @@ public class peerProcess {
         int peerID = Integer.parseInt(args[0]);
         PeerObj callingPeer = null;
 
-        Vector<PeerObj> peers = new Vector<PeerObj>();
+        Vector<PeerObj> peers = new Vector<>();
         try {
             peers = peersInformation.getPeerInformation();
             for (PeerObj peer : peers) {
@@ -38,6 +38,7 @@ public class peerProcess {
         }
 
         peerProcess p = new peerProcess();
+        assert callingPeer != null;
         p.startProcess(callingPeer, otherPeers);
 
 
@@ -47,7 +48,7 @@ public class peerProcess {
         //input thread here
         System.out.println("Starting the process for peer " + callingPeer.getId());
         for (PeerObj connectingPeer : otherPeers) {
-             new Connection(callingPeer, connectingPeer);
+             //new Connection(callingPeer, connectingPeer);
              //commonconfig, map of peers, peerid
         }
 

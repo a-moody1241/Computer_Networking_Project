@@ -13,7 +13,7 @@ public class ServerConnection implements Runnable {
             e.printStackTrace();
         }
         this.connection = connection;
-        //log input
+        Logger.peerToPeerMakesTCPConnection(connection.getNeighborPeer().getPeerID());
         System.out.println("Server is open");
     }
 

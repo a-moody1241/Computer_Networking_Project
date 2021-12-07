@@ -10,8 +10,8 @@ public class Logger {
     private static FileWriter logFile;
     private static PrintWriter logFileWriter;
 
-    public Logger(int peerID_) throws IOException {
-        peerID = peerID_;
+    public Logger(int peerID) throws IOException {
+        Logger.peerID = peerID;
         logFile = new FileWriter("log_peer_" + peerID + ".log");
         logFileWriter = new PrintWriter(logFile);
     }

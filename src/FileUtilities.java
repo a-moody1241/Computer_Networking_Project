@@ -1,13 +1,11 @@
 public class FileUtilities {
-    public static byte booleanToByte(boolean[] booleanArr) throws Exception {
-        if (booleanArr.length > 8)
-            throw new Exception("Boolean array length exceeded, not compatible for byte conversions");
-        byte byteValue = 0;
-        for (boolean b : booleanArr) {
-            byteValue = (byte) (byteValue << 1);
-            byteValue = (byte) (byteValue | (b ? 1 : 0));
+    public static byte booleanArrToByte(boolean[] arr) {
+        byte val = 0;
+        for (boolean b1 : arr) {
+            val <<= 1;
+            if (b1) val |= 1;
         }
-        return byteValue;
+        return val;
     }
 
     public static boolean[] byteToBoolean(byte byteValue) {

@@ -61,7 +61,7 @@ public class FileManager { //todo fix all this
         int i = 0;
         while (i < filePiecesCompletedCount) {
             int temp = Math.min(filePiecesCompletedCount, i + 8);
-            bitfield[index++] = FileUtilities.booleanToByte(Arrays.copyOfRange(filePiecesCompleted, i, temp));
+            bitfield[index++] = FileUtilities.booleanArrToByte(Arrays.copyOfRange(filePiecesCompleted, i, temp));
             i = i + 8;
         }
         return bitfield;
