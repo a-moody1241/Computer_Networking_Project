@@ -127,8 +127,8 @@ public class Connection {
                                     peer.setBitField(FileManager.getBitField());
                                     pManager.sendHaveAll(((Piece_PayLoad) receivedMsg.getMessagePayload()).getIndex());
                                     piecesDownloaded++;
-                                    Logger.downloadingAPiece(neighborPeer.getPeerID(), ((Piece_PayLoad) receivedMsg.getMessagePayload()).getIndex(), FileManager.getNoOfPiecesAvailable());
-                                    if (FileManager.getNooffilepieces() == FileManager.getNooffilepieces()) {
+                                    Logger.downloadingAPiece(neighborPeer.getPeerID(), ((Piece_PayLoad) receivedMsg.getMessagePayload()).getIndex(), FileManager.getFilePiecesAvailableCount());
+                                    if (FileManager.getFilePiecesCompletedCount() == FileManager.getFilePiecesCompletedCount()) {
                                         Logger.completionOfDownload();
                                     }
                                     if (unChoke) {

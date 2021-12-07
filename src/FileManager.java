@@ -6,48 +6,38 @@ import java.util.Arrays;
 import java.util.Hashtable;
 
 public class FileManager { //todo fix all this
-    private static boolean[] filePiecesOwned;
-    private static Hashtable<Integer, Integer> requestedPieces = new Hashtable<Integer, Integer>();
-    private static final int noOfFilePieces = (int) Math
-            .ceil((double) CommonPeerProperties.getFileSize() / CommonPeerProperties.getPieceSize());
-    private static int noOfPiecesAvailable = 0;
+    private static boolean[] filePiecesCompleted;
+    private static Hashtable<Integer, Integer> filePiecesRequested = new Hashtable<Integer, Integer>();
+    private static final int filePiecesCompletedCount = (int) Math.ceil((double) CommonPeerProperties.getFileSize() / CommonPeerProperties.getPieceSize());
+    private static int filePiecesAvailableCount = 0;
     private static String directory = null;
     private static String fileName = CommonPeerProperties.getFileName();
     private static int fileSize = CommonPeerProperties.getFileSize();
     private static File file = null;
 
-    public FileManager(int peerId, boolean hasFile) {
-        directory = "peer_" + peerId + "/";
-
-        filePiecesOwned = new boolean[noOfFilePieces];
-
+    public FileManager(int peerId, boolean hasFile) throws IOException {
+        filePiecesCompleted = new boolean[filePiecesCompletedCount];
         if (hasFile) {
-            Arrays.fill(filePiecesOwned, true);
-            noOfPiecesAvailable = noOfFilePieces;
+            Arrays.fill(filePiecesCompleted, true);
+            filePiecesAvailableCount = filePiecesCompletedCount;
         }
-
+        directory = "peer_" + peerId + "/";
         File folder = new File(directory);
-
         if (!folder.exists()) {
             folder.mkdirs();
         }
-
         file = new File(directory + fileName);
-
         if (!file.exists()) {
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            fileOutputStream.write(new byte[fileSize]);
+            fileOutputStream.close();
             FileOutputStream fos = null;
-            try {
-                fos = new FileOutputStream(file);
-                fos.write(new byte[fileSize]);
-                fos.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
-
     }
-    public static int getNoOfPiecesAvailable() {
-        return noOfPiecesAvailable;
+
+
+    public static int getFilePiecesAvailableCount() {
+        return filePiecesAvailableCount;
     }
     public static File getFile() {
         return file;
@@ -55,30 +45,24 @@ public class FileManager { //todo fix all this
     public static void setFile(File file) {
         FileManager.file = file;
     }
-    public static int getNooffilepieces() {
-        return noOfFilePieces;
+    public static int getFilePiecesCompletedCount() {
+        return filePiecesCompletedCount;
     }
     public static boolean isInteresting(int index) {
-        return filePiecesOwned[index] ? true : false;
+        return filePiecesCompleted[index] ? true : false;
     }
     public static synchronized boolean hasCompleteFile() {
-        return noOfPiecesAvailable == noOfFilePieces ? true : false;
+        return filePiecesAvailableCount == filePiecesCompletedCount ? true : false;
     }
     public static synchronized byte[] getBitField() throws Exception {
-        int size = (int) Math.ceil((double) noOfFilePieces / 8);
+        int size = (int) Math.ceil((double) filePiecesCompletedCount / 8);
         byte[] bitfield = new byte[size];
-        int counter = 0;
-        int indexI = 0;
-        // TODO Implement Professor Logic
-        while (indexI < noOfFilePieces) {
-            int temp;
-            if (noOfFilePieces > indexI + 8) {
-                temp = indexI + 8;
-            } else {
-                temp = noOfFilePieces;
-            }
-            bitfield[counter++] = FileUtilities.booleanToByte(Arrays.copyOfRange(filePiecesOwned, indexI, temp));
-            indexI = indexI + 8;
+        int index = 0;
+        int i = 0;
+        while (i < filePiecesCompletedCount) {
+            int temp = Math.min(filePiecesCompletedCount, i + 8);
+            bitfield[index++] = FileUtilities.booleanToByte(Arrays.copyOfRange(filePiecesCompleted, i, temp));
+            i = i + 8;
         }
         return bitfield;
     }
@@ -110,17 +94,16 @@ public class FileManager { //todo fix all this
             fos.write(piece.getContent());
             fos.close();
 
-            noOfPiecesAvailable++;
-            filePiecesOwned[piece.getIndex()] = true;
+            filePiecesAvailableCount++;
+            filePiecesCompleted[piece.getIndex()] = true;
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
     public static boolean compareBitfields(byte[] neighborBitfield, byte[] bitfield) {
         boolean flag = false;
-        int size = (int) Math.ceil((double) noOfFilePieces / 8);
+        int size = (int) Math.ceil((double) filePiecesCompletedCount / 8);
         byte[] interesting = new byte[size];
         if (neighborBitfield == null) {
             return flag;
@@ -135,14 +118,13 @@ public class FileManager { //todo fix all this
         }
         return flag;
     }
-
     public static int requestPiece(byte[] neighborBitfield, byte[] bitfield, int nPID) {
-        int size = (int) Math.ceil((double) noOfFilePieces / 8);
+        int size = (int) Math.ceil((double) filePiecesCompletedCount / 8);
         byte[] interesting = new byte[size];
-        boolean[] interestingPieces = new boolean[noOfFilePieces];
+        boolean[] interestingPieces = new boolean[filePiecesCompletedCount];
         int finLength;
 
-        finLength = size > 1 ? noOfFilePieces % (8) : noOfFilePieces;
+        finLength = size > 1 ? filePiecesCompletedCount % (8) : filePiecesCompletedCount;
 
         int start, end;
 
@@ -153,20 +135,19 @@ public class FileManager { //todo fix all this
             end = indexI == size - 1 ? finLength : 8;
             boolean[] x = FileUtilities.byteToBoolean(interesting[indexI]);
             System.arraycopy(x, start, interestingPieces, indexJ, end);
-            indexJ = indexJ + 8 < noOfFilePieces ? indexJ + 8 : noOfFilePieces - finLength;
+            indexJ = indexJ + 8 < filePiecesCompletedCount ? indexJ + 8 : filePiecesCompletedCount - finLength;
             indexI++;
         }
         int indexK = 0;
-        while (indexK < noOfFilePieces) {
-            if (interestingPieces[indexK] == true && !requestedPieces.containsKey(indexK)) {
-                requestedPieces.put(indexK, indexK);
+        while (indexK < filePiecesCompletedCount) {
+            if (interestingPieces[indexK] == true && !filePiecesRequested.containsKey(indexK)) {
+                filePiecesRequested.put(indexK, indexK);
                 return indexK;
             }
             indexK++;
         }
         return -1;
     }
-
     public static void checker() {
 
         (new Thread() {
@@ -175,11 +156,11 @@ public class FileManager { //todo fix all this
                 try {
                     do {
                         Thread.sleep(60000);
-                        for (Integer ind : requestedPieces.keySet()) {
-                            if (!filePiecesOwned[ind])
-                                requestedPieces.remove(ind);
+                        for (Integer ind : filePiecesRequested.keySet()) {
+                            if (!filePiecesCompleted[ind])
+                                filePiecesRequested.remove(ind);
                         }
-                    } while (noOfPiecesAvailable < noOfFilePieces);
+                    } while (filePiecesAvailableCount < filePiecesCompletedCount);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

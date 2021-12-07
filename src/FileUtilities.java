@@ -1,22 +1,22 @@
 public class FileUtilities {
-    public static byte booleanToByte(boolean[] bool) throws Exception {
-        if (bool.length > 8)
-            throw new Exception("boolean array length exceeded: not compatible with byte");
-        byte val = 0;
-        for (boolean x : bool) {
-            val = (byte) (val << 1);
-            val = (byte) (val | (x ? 1 : 0));
+    public static byte booleanToByte(boolean[] booleanArr) throws Exception {
+        if (booleanArr.length > 8)
+            throw new Exception("Boolean array length exceeded, not compatible for byte conversions");
+        byte byteValue = 0;
+        for (boolean b : booleanArr) {
+            byteValue = (byte) (byteValue << 1);
+            byteValue = (byte) (byteValue | (b ? 1 : 0));
         }
-        return val;
+        return byteValue;
     }
 
-    public static boolean[] byteToBoolean(byte val) {
-        boolean[] bool = new boolean[8];
+    public static boolean[] byteToBoolean(byte byteValue) {
+        boolean[] booleanArr = new boolean[8];
         for (int i = 0; i < 8; i++) {
-            bool[7 - i] = (val & 1) == 1;
-            val = (byte) (val >> 1);
+            booleanArr[7 - i] = (byteValue & 1) == 1;
+            byteValue = (byte) (byteValue >> 1);
         }
-        return bool;
+        return booleanArr;
     }
 
     public static void updateBitfield(long index, byte[] bitfield) {
@@ -52,9 +52,7 @@ public class FileUtilities {
                 j = j + 8;
             else
                 j = size - finLength;
-
         }
-
         for (int k = 0; k < interestingPieces.length; k++) {
             if (interestingPieces[k] = false)
                 return false;
