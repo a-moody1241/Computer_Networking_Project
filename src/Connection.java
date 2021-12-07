@@ -121,11 +121,11 @@ public class Connection {
                                         System.out.println("Peer " + neighborPeer.getPeerID() + " does not contain any interesting file pieces");
                                         Message notInterested = new Message(MessageGroup.NOT_INTERESTED, null);
                                         sendMessage(notInterested);
-                                        break; //todo ?? is this necessary
+                                    }else{
+                                        System.out.println("Peer " + neighborPeer.getPeerID() + " contains interesting file pieces");
+                                        Message interested = new Message(MessageGroup.INTERESTED, null);
+                                        sendMessage(interested);
                                     }
-                                    System.out.println("Peer " + neighborPeer.getPeerID() + " contains interesting file pieces");
-                                    Message interested = new Message(MessageGroup.INTERESTED, null);
-                                    sendMessage(interested);
                                     break;
                                 case REQUEST:
                                     System.out.println("request message");
