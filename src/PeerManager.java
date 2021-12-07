@@ -40,7 +40,7 @@ public class PeerManager extends Thread {
 
     public void kPreferredPeers() {
 
-        long timeout = CommonPeerProperties.getUnchokingInterval() * 1000;
+        long timeout = CommonPeerProperties.getUnchokingInterval() * 1000L;
         new Thread() {
             public void run() {
                 try {
