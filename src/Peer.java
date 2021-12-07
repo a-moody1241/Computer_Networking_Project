@@ -14,11 +14,19 @@ public class Peer {
     private AtomicBoolean interested;
     private long downloadSpeed; //todo change name
     private boolean peerUp;//todo change name
-    private Socket socket;
+    private Socket peerSocket;
     private boolean unChoked; //todo change name
     private Connection connection;
 
 
+    public Peer() {
+
+    }
+
+    public Socket getPeerSocket(){ return peerSocket;}
+    public void setPeerSocket(Socket socket){
+        this.peerSocket = socket;
+    }
     public long getDownloadSpeed() {
         return downloadSpeed;
     }
@@ -95,6 +103,9 @@ public class Peer {
 
     public void setPeerUp(boolean peerUp) {
         this.peerUp = peerUp;
+    }
+    public boolean isPeerUp(){
+        return this.peerUp;
     }
 
     public AtomicInteger getBytesDownloadedFrom() {return bytesDownloadedFrom;}

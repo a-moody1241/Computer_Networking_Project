@@ -8,7 +8,7 @@ import java.util.*;
 public class Server {
 
 	//add
-	private final static String fileToSend = "/Users/catherinehealy/Documents/GitHub/Computer_Networking_Project/src/peer_1001/tree.jpg";//"src/peer_1001/tree.jpg";
+	private final static String fileToSend = "testout"; ///Users/catherinehealy/Documents/GitHub/Computer_Networking_Project/src/peer_1001";//"src/peer_1001/";
 	//added
 
 	private static final int sPort = 8000;   //The server will be listening on this port number

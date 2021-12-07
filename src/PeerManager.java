@@ -2,12 +2,16 @@
 import Configuration.CommonPeerProperties;
 import Message.Message;
 import Message.MessageGroup;
+
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
 
 public class PeerManager extends Thread {
 
     private Socket socketPort;
+    private ServerSocket socket;
+    private Peer peer;
     private Peer hostPeer;
 
     private Vector<Peer>  peers = StartRemotePeers.getPeerInfo();
@@ -16,12 +20,17 @@ public class PeerManager extends Thread {
     private static ArrayList<Peer> kNeighborPeers;
     private static Peer optimizedUnchokedPeer;
 
-    public PeerManager(Socket sSocket, Peer hostPeer) {
-        super();
-        this.socketPort = sSocket;
-        this.hostPeer = hostPeer;
-    }
+    //public PeerManager(Socket sSocket, Peer hostPeer) {
+      //  super();
+        //this.socketPort = sSocket;
+       // this.hostPeer = hostPeer;
+    //}
 
+    public PeerManager(ServerSocket socket, Peer peer){
+        super();
+        this.socket = socket;
+        this.peer = peer;
+    }
     //public void setSocketPort(ServerSocket socketPort) {
 //        this.socketPort = socketPort;
 //    }

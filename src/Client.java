@@ -22,7 +22,7 @@ public class Client {
 	String message;                //message send to the server
 	String MESSAGE;                //capitalized message read from the server
 
-    private final static String fileOutput = "test";//"/Users/catherinehealy/Documents/GitHub/Computer_Networking_Project/src/peer_1002/testout.jpg";//"src/peer_1002/testout.jpg"; //"src/peer_1001/tree.jpg"
+    private final static String fileOutput = "test";//"/Users/catherinehealy/Documents/GitHub/Computer_Networking_Project/src/peer_1002/testout.jpg";//"src/peer_1002/testout.jpg"; //"src/peer_1001/"
 
     public void Client() {}
 

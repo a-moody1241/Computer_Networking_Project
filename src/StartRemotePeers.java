@@ -22,6 +22,10 @@ public class StartRemotePeers {
     public static final String CONFIG_FILE = "../../../PeerInfo.cfg";
     private static Vector<Peer> peerInfo = new Vector<Peer>();
 
+    public static Vector<Peer> getPeerInfo(){
+        return peerInfo;
+    }
+
     public void getConfiguration() {
         try {
             BufferedReader br = new BufferedReader(new FileReader(CONFIG_FILE));

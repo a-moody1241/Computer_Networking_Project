@@ -41,7 +41,14 @@ public class peerProcess {
         peerProcess p = new peerProcess();
         assert callingPeer != null;
         System.out.println(callingPeer.getPeerID());
-        p.startProcess(callingPeer, otherPeers);
+
+        PeerConnection peerConnection = new PeerConnection(callingPeer);
+        peerConnection.startConnection(peerConnection);
+
+
+
+
+        //p.startProcess(callingPeer, otherPeers);
         //(ServerSocket sSocket, Peer hostPeer, HashMap<Integer, Peer> peers) {
 
     }
@@ -51,10 +58,10 @@ public class peerProcess {
         System.out.println("Starting the process for peer " + callingPeer.getPeerID());
         new FileManager(callingPeer.getPeerID(), callingPeer.getFilePresent());
         for (Peer connectingPeer : otherPeers) {
-            Connection newConnection = new Connection(callingPeer, connectingPeer);
-            connectingPeer.setConnection(newConnection);
+            //PeerConnection newConnection = new PeerConnection(callingPeer, connectingPeer);
+            //connectingPeer.setConnection(newConnection);
 
-            newConnection.startConnection(newConnection);
+            //newConnection.startConnection(newConnection);
         }
 
 

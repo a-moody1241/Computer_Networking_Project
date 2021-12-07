@@ -12,17 +12,19 @@ import java.net.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Vector;
 
-public class Connection implements Runnable{
+public class Connection extends Thread{
 
     private Peer peer;
-    private Peer neighborPeer;
+    private Peer neighbor;
     private ObjectOutputStream out;
     private ObjectInputStream in;
-    private ObjectInputStream clientIn;
+    private ObjectInputStream hostIn;
     private ServerSocket serverSocket;
-    private int piecesDownloaded;
-    private PeerManager pManager;
+    private int pieces;
+    private PeerManager peerManager;
+    private Vector<Peer> peers = StartRemotePeers.getPeerInfo();
 
     public Map<Integer, Double> getDownloadRate() {
         return downloadRate;
@@ -34,41 +36,26 @@ public class Connection implements Runnable{
     private peerProcess peerProcess;
 
 
-    public Connection(Peer peer, Peer neighborPeer) {
+
+    public Connection(Peer peer, Peer neighbor, ObjectInputStream in, ObjectOutputStream out, Socket socket, PeerManager peerManager, int pieces) {
         System.out.println("In connection");
         this.peer = peer;
-        this.neighborPeer = neighborPeer;
+        this.neighbor = neighbor;
         this.downloadRate = new HashMap<Integer, Double>();
-        //pManager = new PeerManager()
-        this.startConnection();
-    }
-
-    public void startConnection(Connection connection) {
+        this.peers = peers;
+        this.peerManager = peerManager;
+        this.pieces = pieces;
         try {
-            //Thread sThread = new Thread(new ServerConnection(this.peer, this));
-            //sThread.start();
-
-            System.out.println("Creating a client for " + this.peer.getPeerID() + " to " + this.neighborPeer.getPeerID());
-            //Socket cSocket = new Socket("localhost", 8001);
-           // Socket cSocket = new Socket(this.neighborPeer.getHostName(), this.neighborPeer.getPortNumber());
-            //ClientConnection newConnection = new ClientConnection(cSocket, this);
-            //MessageManager m = new MessageManager(newConnection, this);
-            //(new Thread(m)).start();
-            Socket cSocket = new Socket(this.neighborPeer.getHostName(), this.neighborPeer.getPortNumber());
-            pManager = new PeerManager(cSocket, peer);
-            ClientConnection newConnection = new ClientConnection(cSocket, this);
-            MessageManager m = new MessageManager(newConnection, this);
-            (new Thread(m)).start();
-            //(new Thread(newConnection)).start();
-            //receiveMessage();
-
-            Thread t = new Thread(connection);
-            t.start();
-
-        } catch (Exception e) {
+            if (neighbor.getPeerSocket() == null){
+                this.hostIn = null;
+            } else {
+                this.hostIn = new ObjectInputStream(neighbor.getPeerSocket().getInputStream());
+            }
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 
     public void sendMessage(Message message) {
         try {
@@ -90,41 +77,42 @@ public class Connection implements Runnable{
                 boolean unChoke = false;
                 while (true) {
                     try {
-                        receivedMsg = (Message) clientIn.readObject();
+                        receivedMsg = (Message) hostIn.readObject();
                         //MessageGroup messageGroup
                         //PayLoad messagePayload
                         //clientIn
-                        System.out.println("Received message type: " + receivedMsg.getMessageGroup() + " from: " + neighborPeer.getPeerID());
+                        System.out.println("Received message type: " + receivedMsg.getMessageGroup() + " from: " + neighbor.getPeerID());
+
                         if (receivedMsg != null) {
                             switch (receivedMsg.getMessageGroup()) {
                                 case CHOKE:
                                     System.out.println("choked message");
-                                    Logger.choking(neighborPeer.getPeerID());
-                                    downloadRate.put(neighborPeer.getPeerID(), 0.0);
+                                    Logger.choking(neighbor.getPeerID());
+                                    downloadRate.put(neighbor.getPeerID(), 0.0);
                                     break;
                                 case UNCHOKE:
                                     System.out.println("unchoked message");
                                     unChoke = true;
-                                    Logger.unchoking(neighborPeer.getPeerID());
+                                    Logger.unchoking(neighbor.getPeerID());
                                     sendRequest();
                                     break;
                                 case INTERESTED:
                                     System.out.println("interested message");
-                                    pManager.addToInterestedPeers(neighborPeer);
-                                    Logger.receivingInterestedMessage(neighborPeer.getPeerID());
+                                    peerManager.addToInterestedPeers(neighbor);
+                                    Logger.receivingInterestedMessage(neighbor.getPeerID());
                                     break;
                                 case NOT_INTERESTED:
                                     System.out.println("not interested message");
-                                    pManager.removeFromInterestedPeers(neighborPeer);
-                                    Logger.receivingNotInterestedMessage(neighborPeer.getPeerID());
+                                    peerManager.removeFromInterestedPeers(neighbor);
+                                    Logger.receivingNotInterestedMessage(neighbor.getPeerID());
                                     break;
                                 case HAVE:
                                     System.out.println("have message");
                                     Have_PayLoad have_payLoad = (Have_PayLoad) (receivedMsg.getMessagePayload());
-                                    FileUtilities.updateBitfield(have_payLoad.getIndex(), neighborPeer.getBitField());
-                                    Logger.receivingHaveMessage(neighborPeer.getPeerID(), have_payLoad.getIndex());
+                                    FileUtilities.updateBitfield(have_payLoad.getIndex(), neighbor.getBitField());
+                                    Logger.receivingHaveMessage(neighbor.getPeerID(), have_payLoad.getIndex());
                                     if (!FileManager.isInteresting(have_payLoad.getIndex())) {
-                                        System.out.println("Peer " + neighborPeer.getPeerID() + " contains interesting file pieces");
+                                        System.out.println("Peer " + neighbor.getPeerID() + " contains interesting file pieces");
                                         Message interested = new Message(MessageGroup.INTERESTED, null);
                                         sendMessage(interested);
                                     }
@@ -132,13 +120,13 @@ public class Connection implements Runnable{
                                 case BITFIELD:
                                     System.out.println("bitfield message");
                                     BitField_PayLoad bitField_payLoad = (BitField_PayLoad) receivedMsg.getMessagePayload();
-                                    neighborPeer.setBitField(bitField_payLoad.getBitfield());
+                                    neighbor.setBitField(bitField_payLoad.getBitfield());
                                     if (!FileManager.compareBitfields(bitField_payLoad.getBitfield(), peer.getBitField())) {
-                                        System.out.println("Peer " + neighborPeer.getPeerID() + " does not contain any interesting file pieces");
+                                        System.out.println("Peer " + neighbor.getPeerID() + " does not contain any interesting file pieces");
                                         Message notInterested = new Message(MessageGroup.NOT_INTERESTED, null);
                                         sendMessage(notInterested);
                                     }else{
-                                        System.out.println("Peer " + neighborPeer.getPeerID() + " contains interesting file pieces");
+                                        System.out.println("Peer " + neighbor.getPeerID() + " contains interesting file pieces");
                                         Message interested = new Message(MessageGroup.INTERESTED, null);
                                         sendMessage(interested);
                                     }
@@ -153,16 +141,15 @@ public class Connection implements Runnable{
                                     peer.setBitField(FileManager.getBitField());
 
                                     Message have = new Message(MessageGroup.HAVE, new Have_PayLoad(((Piece_PayLoad) receivedMsg.getMessagePayload()).getIndex()));
-                                        Map.Entry<Integer, Peer> entry = iterator.next();
                                     for (Peer temp: StartRemotePeers.getPeerInfo()){
                                         temp.getConnection().sendMessage(have);
                                     }
-                                    piecesDownloaded++;
+                                    pieces++;
                                     stop_Download = System.currentTimeMillis();
                                     double downloadRateT = (double) CommonPeerProperties.getPieceSize() /(stop_Download -start_Download);
-                                    downloadRate.put(neighborPeer.getPeerID(), downloadRateT);
+                                    downloadRate.put(neighbor.getPeerID(), downloadRateT);
 
-                                    Logger.downloadingAPiece(neighborPeer.getPeerID(), ((Piece_PayLoad) receivedMsg.getMessagePayload()).getIndex(), FileManager.getFilePiecesAvailableCount());
+                                    Logger.downloadingAPiece(neighbor.getPeerID(), ((Piece_PayLoad) receivedMsg.getMessagePayload()).getIndex(), FileManager.getFilePiecesAvailableCount());
                                     if (FileManager.getFilePiecesCompletedCount() == FileManager.getFilePiecesCompletedCount()) {
                                         Logger.completionOfDownload();
                                     }
@@ -173,7 +160,7 @@ public class Connection implements Runnable{
                             }
                         }
                     } catch (SocketException e) {
-                        neighborPeer.setPeerUp(false);
+                        neighbor.setPeerUp(false);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -182,9 +169,9 @@ public class Connection implements Runnable{
 
             void sendRequest() {
                 System.out.println("in send request");
-                int pieceIdx = FileManager.requestPiece(neighborPeer.getBitField(), peer.getBitField(), neighborPeer.getPeerID());
+                int pieceIdx = FileManager.requestPiece(neighbor.getBitField(), peer.getBitField(), neighbor.getPeerID());
                 if (pieceIdx == -1) {
-                    System.out.println("No more interesting pieces to request from peer " + neighborPeer.getPeerID());
+                    System.out.println("No more interesting pieces to request from peer " + neighbor.getPeerID());
                     Message not_interested = new Message(MessageGroup.NOT_INTERESTED, null);
                     sendMessage(not_interested);
                     return;
@@ -211,23 +198,23 @@ public class Connection implements Runnable{
     }
 
     public Peer getNeighborPeer() {
-        return neighborPeer;
+        return neighbor;
     }
 
     public void setNeighborPeer(Peer neighborPeer) {
-        this.neighborPeer = neighborPeer;
+        this.neighbor = neighborPeer;
     }
 
     public void resetPiecesDownloaded() {
-        piecesDownloaded = 0;
+        pieces = 0;
     }
 
     // get/set methods for ClientIn ObjectInputStream
-    public ObjectInputStream getClientIn() {
-        return clientIn;
+    public ObjectInputStream getHostIn() {
+        return hostIn;
     }
     public void setClientIn(ObjectInputStream clientIn) {
-        this.clientIn = clientIn;
+        this.hostIn = clientIn;
     }
 
     public void startServer() {
@@ -243,34 +230,31 @@ public class Connection implements Runnable{
 
                         handshake receiving = (handshake) in.readObject();
                         int neighborID = receiving.getPeerID();
-
+                        Peer neighbor;
                         System.out.println("Received handshake from " + neighborID);
                         Logger.peerToPeerMakesTCPConnection(neighborID);
 
-                        //this is where i am
+                        //creating connection not worrying about peers being interested
+
+                        for (int i = 0; i < peers.size(); i++){
+                            if (peers.get(i).getPeerID() == neighborID){
+                                neighbor = peers.get(i);
+                            }
+                        }
+                        //send bitfield message
+
                     } catch (IOException | ClassNotFoundException e) {
                         e.printStackTrace();
                     }
                 }
             }
-        })
+        }).start();
     }
 
     @Override
     public void run() {
-        System.out.println("Starting peer " + this.getClientPeer().getPeerID());
-        try {
-            serverSocket = new ServerSocket(this.getClientPeer().getPortNumber());
-            System.out.println("Server socket created for " + this.getClientPeer().getHostName());
-    public void run() {
-        receiveMessage();
-        FileManager.checker();
-    }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        startServer();
-        startSender()
+       receiveMessage();
+       FileManager.checker();
+       neighbor.setDownloadSpeed(pieces);
     }
 }
