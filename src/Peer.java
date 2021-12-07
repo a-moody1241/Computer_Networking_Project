@@ -12,39 +12,26 @@ public class Peer {
     private AtomicInteger bytesDownloadedFrom;
     private BitSet receivedParts;
     private AtomicBoolean interested;
-
+    private long downloadSpeed; //todo change name
     private boolean peerUp;//todo change name
     private Socket socket;
+    private boolean unChoked; //todo change name
+    private Connection connection;
+
 
     public long getDownloadSpeed() {
         return downloadSpeed;
     }
-
     public void setDownloadSpeed(long downloadSpeed) {
         this.downloadSpeed = downloadSpeed;
     }
-
-    private long downloadSpeed; //todo change name
-
-    public boolean isUnChoked() {
-        return unChoked;
-    }
-
-    public void setUnChoked(boolean unChoked) {
-        this.unChoked = unChoked;
-    }
-
-    private boolean unChoked; //todo change name
-
-    public Connection getConnection() {
-        return connection;
-    }
+    public boolean isUnChoked() {return unChoked;}
+    public void setUnChoked(boolean unChoked) {this.unChoked = unChoked;}
+    public Connection getConnection() {return connection;}
 
     public void setConnection(Connection connection) {
         this.connection = connection;
     }
-
-    private Connection connection;
 
     public byte[] getBitField() {
         return bitField;

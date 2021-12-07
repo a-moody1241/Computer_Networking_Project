@@ -23,7 +23,7 @@ public class peerProcess {
         new Logger(peerID);
         Peer callingPeer = null;
 
-        Vector<Peer> peers = new Vector<>();
+        Vector<Peer> peers;
         try {
             peers = peersInformation.getPeerInformation();
             for (Peer peer : peers) {
@@ -42,6 +42,7 @@ public class peerProcess {
         assert callingPeer != null;
         System.out.println(callingPeer.getPeerID());
         p.startProcess(callingPeer, otherPeers);
+        //(ServerSocket sSocket, Peer hostPeer, HashMap<Integer, Peer> peers) {
 
     }
 

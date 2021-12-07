@@ -10,7 +10,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.*;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 
@@ -24,6 +23,11 @@ public class Connection implements Runnable{
     private ServerSocket serverSocket;
     private int piecesDownloaded;
     private PeerManager pManager;
+
+    public Map<Integer, Double> getDownloadRate() {
+        return downloadRate;
+    }
+
     private Map<Integer, Double> downloadRate; // peer id --> download rate
     private final long start_Download = 0;
     private long stop_Download;
@@ -35,6 +39,8 @@ public class Connection implements Runnable{
         this.peer = peer;
         this.neighborPeer = neighborPeer;
         this.downloadRate = new HashMap<Integer, Double>();
+        //pManager = new PeerManager()
+        this.startConnection();
     }
 
     public void startConnection(Connection connection) {
@@ -48,6 +54,11 @@ public class Connection implements Runnable{
             //ClientConnection newConnection = new ClientConnection(cSocket, this);
             //MessageManager m = new MessageManager(newConnection, this);
             //(new Thread(m)).start();
+            Socket cSocket = new Socket(this.neighborPeer.getHostName(), this.neighborPeer.getPortNumber());
+            pManager = new PeerManager(cSocket, peer);
+            ClientConnection newConnection = new ClientConnection(cSocket, this);
+            MessageManager m = new MessageManager(newConnection, this);
+            (new Thread(m)).start();
             //(new Thread(newConnection)).start();
             //receiveMessage();
 
@@ -99,12 +110,12 @@ public class Connection implements Runnable{
                                     break;
                                 case INTERESTED:
                                     System.out.println("interested message");
-                                    pManager.add(neighborPeer);
+                                    pManager.addToInterestedPeers(neighborPeer);
                                     Logger.receivingInterestedMessage(neighborPeer.getPeerID());
                                     break;
                                 case NOT_INTERESTED:
                                     System.out.println("not interested message");
-                                    pManager.remove(neighborPeer);
+                                    pManager.removeFromInterestedPeers(neighborPeer);
                                     Logger.receivingNotInterestedMessage(neighborPeer.getPeerID());
                                     break;
                                 case HAVE:
@@ -142,13 +153,10 @@ public class Connection implements Runnable{
                                     peer.setBitField(FileManager.getBitField());
 
                                     Message have = new Message(MessageGroup.HAVE, new Have_PayLoad(((Piece_PayLoad) receivedMsg.getMessagePayload()).getIndex()));
-                                    Iterator<Map.Entry<Integer, Peer>> iterator = pManager.getPeers().entrySet().iterator();
-                                    while (iterator.hasNext()){
                                         Map.Entry<Integer, Peer> entry = iterator.next();
-                                        Peer temp = entry.getValue();
+                                    for (Peer temp: StartRemotePeers.getPeerInfo()){
                                         temp.getConnection().sendMessage(have);
                                     }
-                                    //pManager.sendHaveAll(((Piece_PayLoad) receivedMsg.getMessagePayload()).getIndex());
                                     piecesDownloaded++;
                                     stop_Download = System.currentTimeMillis();
                                     double downloadRateT = (double) CommonPeerProperties.getPieceSize() /(stop_Download -start_Download);
@@ -254,6 +262,10 @@ public class Connection implements Runnable{
         try {
             serverSocket = new ServerSocket(this.getClientPeer().getPortNumber());
             System.out.println("Server socket created for " + this.getClientPeer().getHostName());
+    public void run() {
+        receiveMessage();
+        FileManager.checker();
+    }
 
         } catch (IOException e) {
             e.printStackTrace();
