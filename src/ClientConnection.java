@@ -57,6 +57,7 @@ public class ClientConnection implements Runnable {
     }
 
     public void send(byte[] msg){
+        //todo this is where is it sent out into the stream
         try {
             out.write(msg);
             out.flush();
