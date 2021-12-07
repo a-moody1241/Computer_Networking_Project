@@ -48,7 +48,7 @@ public class Client {
 		try{
 
 			//create a socket to connect to the server
-			requestSocket = new Socket("localhost", 8000);
+			requestSocket = new Socket("localhost", 8001);
 			System.out.println("Connected to localhost in port 8000");
 			//initialize inputStream and outputStream
 
@@ -127,10 +127,9 @@ public class Client {
 	//main method
 	public static void main(String args[])
 	{
-		peerProcess.main(new String[]{"1001"});
 
-		//Client client = new Client();
-		//client.run();
+		Client client = new Client();
+		client.run();
 	}
 
 }

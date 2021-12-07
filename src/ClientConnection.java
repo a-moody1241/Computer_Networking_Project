@@ -4,6 +4,7 @@ import Message.Message_PayLoads.PayLoad;
 
 import javax.swing.text.Utilities;
 import java.io.*;
+import java.net.ConnectException;
 import java.net.Socket;
 import java.util.*;
 
@@ -14,15 +15,19 @@ public class ClientConnection implements Runnable {
     private Connection connection;
     private PipedOutputStream pipedOutputStream = new PipedOutputStream();
 
-    public ClientConnection(Socket cSocket, Connection connection){
-       try {
+    public ClientConnection(Socket cSocket, Connection connection) {
+        System.out.println("Client server is.....");
+
+        try {
            this.cSocket = cSocket;
            this.connection = connection;
            this.out = new ObjectOutputStream(cSocket.getOutputStream());
            this.in = new ObjectInputStream(cSocket.getInputStream());
-       } catch (IOException e) {
-           e.printStackTrace();
-       }
+       } catch (ConnectException e) {
+            System.err.println("Connections.Connection refused. You need to initiate a server first.");
+        } catch (IOException o){
+            System.err.println("error");
+        }
         System.out.println("Client server is running");
     }
     public void receive(){

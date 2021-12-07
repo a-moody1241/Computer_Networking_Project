@@ -6,18 +6,13 @@ import java.net.UnknownHostException;
 import java.util.Vector;
 
 public class peerProcess {
-    private static Vector<Peer> otherPeers = new Vector<Peer>();
-
 
     public static void main(String[] args) {
-        CommonPeerProperties cpp = new CommonPeerProperties();
-        PeersInformation peersInformation = new PeersInformation();
-        peersInformation.getConfiguration();
+        Vector<Peer> otherPeers = new Vector<Peer>();
+        StartRemotePeers peersInformation = new StartRemotePeers();
         peersInformation.getPeerInformation();
-        cpp.getPeerProperties();
 
         System.out.println("finished cpp and pi");
-        System.out.println(peersInformation.getPeerInformation().get(0).getPeerID());
 
         int peerID = Integer.parseInt(args[0]);
         Peer callingPeer = null;
@@ -36,11 +31,9 @@ public class peerProcess {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("In peerProcess: added the previous peers to a vector");
         peerProcess p = new peerProcess();
         assert callingPeer != null;
         p.startProcess(callingPeer, otherPeers);
-
 
     }
 
@@ -48,8 +41,7 @@ public class peerProcess {
         //input thread here
         System.out.println("Starting the process for peer " + callingPeer.getPeerID());
         for (Peer connectingPeer : otherPeers) {
-             //new Connection(callingPeer, connectingPeer);
-             //commonconfig, map of peers, peerid
+             new Connection(callingPeer, connectingPeer);
         }
 
 
