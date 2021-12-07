@@ -13,6 +13,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 
@@ -140,7 +141,15 @@ public class Connection {
                                     System.out.println("piece message");
                                     FileManager.store((Piece_PayLoad) receivedMsg.getMessagePayload());
                                     peer.setBitField(FileManager.getBitField());
-                                    pManager.sendHaveAll(((Piece_PayLoad) receivedMsg.getMessagePayload()).getIndex());
+
+                                    Message have = new Message(MessageGroup.HAVE, new Have_PayLoad(((Piece_PayLoad) receivedMsg.getMessagePayload()).getIndex()));
+                                    Iterator<Map.Entry<Integer, Peer>> iterator = pManager.getPeers().entrySet().iterator();
+                                    while (iterator.hasNext()){
+                                        Map.Entry<Integer, Peer> entry = iterator.next();
+                                        Peer temp = entry.getValue();
+                                        temp.getConnection().sendMessage(have);
+                                    }
+                                    //pManager.sendHaveAll(((Piece_PayLoad) receivedMsg.getMessagePayload()).getIndex());
                                     piecesDownloaded++;
                                     stop_Download = System.currentTimeMillis();
                                     double downloadRateT = (double) CommonPeerProperties.getPieceSize() /(stop_Download -start_Download);
