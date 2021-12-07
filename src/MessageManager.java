@@ -1,4 +1,6 @@
 import Message.Message;
+import Message.MessageGroup;
+import Message.Message_PayLoads.BitField_PayLoad;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -29,6 +31,13 @@ public class MessageManager implements Runnable {
         this.receiveHandshake();
         //(new Thread(clientConnection)).start();
         //this.processData();
+        try {
+            BitField_PayLoad bitField_payLoad= new BitField_PayLoad(FileManager.getBitField());
+            Message message = new Message(MessageGroup.BITFIELD, bitField_payLoad);
+            this.connection.sendMessage(message);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void sendHandshake(int peerID){

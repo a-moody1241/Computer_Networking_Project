@@ -7,7 +7,7 @@ import java.util.Vector;
 
 public class peerProcess {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Vector<Peer> otherPeers = new Vector<Peer>();
         StartRemotePeers peersInformation = new StartRemotePeers();
         peersInformation.getPeerInformation();
@@ -15,6 +15,7 @@ public class peerProcess {
         System.out.println("finished cpp and pi");
 
         int peerID = Integer.parseInt(args[0]);
+        new Logger(peerID);
         Peer callingPeer = null;
 
         Vector<Peer> peers = new Vector<>();
@@ -37,9 +38,10 @@ public class peerProcess {
 
     }
 
-    public void startProcess(Peer callingPeer, Vector<Peer> otherPeers) {
+    public void startProcess(Peer callingPeer, Vector<Peer> otherPeers) throws IOException {
         //input thread here
         System.out.println("Starting the process for peer " + callingPeer.getPeerID());
+        new FileManager(callingPeer.getPeerID(),callingPeer.getFilePresent());
         for (Peer connectingPeer : otherPeers) {
              new Connection(callingPeer, connectingPeer);
         }
