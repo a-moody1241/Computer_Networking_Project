@@ -17,16 +17,15 @@ public class peerProcess {
         peersInformation.getConfiguration();
         peersInformation.getPeerInformation();
 
-        System.out.println("finished cpp and pi");
 
         int peerID = Integer.parseInt(args[0]);
         new Logger(peerID);
         Peer callingPeer = null;
-
         Vector<Peer> peers;
         try {
             peers = peersInformation.getPeerInformation();
             for (Peer peer : peers) {
+                peer.setHostName("localhost");
                 if (peerID == peer.getPeerID()) {
                     callingPeer = peer;
                     break;
@@ -37,47 +36,23 @@ public class peerProcess {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("finished creating other elements");
         peerProcess p = new peerProcess();
         assert callingPeer != null;
-        System.out.println(callingPeer.getPeerID());
+        System.out.println(callingPeer.getPortNumber());
 
         PeerConnection peerConnection = new PeerConnection(callingPeer);
         peerConnection.startConnection(peerConnection);
 
-
-
-
-        //p.startProcess(callingPeer, otherPeers);
-        //(ServerSocket sSocket, Peer hostPeer, HashMap<Integer, Peer> peers) {
-
-    }
-
-    public void startProcess(Peer callingPeer, Vector<Peer> otherPeers) throws IOException {
-        //input thread here
-        System.out.println("Starting the process for peer " + callingPeer.getPeerID());
-        new FileManager(callingPeer.getPeerID(), callingPeer.getFilePresent());
-        for (Peer connectingPeer : otherPeers) {
-            //PeerConnection newConnection = new PeerConnection(callingPeer, connectingPeer);
-            //connectingPeer.setConnection(newConnection);
-
-            //newConnection.startConnection(newConnection);
-        }
-
-
-    }
-
-    public static Socket initializePeer(Peer callingPeer) {
-        Socket clientSocket = null;
-        try {
-            clientSocket = new Socket(callingPeer.getHostName(), callingPeer.getPortNumber());
-            System.out.println("Socket created for Peer " + callingPeer.getPeerID());
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        try{
+            Thread.sleep(5);
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return clientSocket;
+
+
+
     }
+
+
 
 }

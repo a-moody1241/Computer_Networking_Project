@@ -36,9 +36,12 @@ public class Connection extends Thread{
     private peerProcess peerProcess;
 
 
-
+    public ObjectOutputStream getOut(){ return out;}
+    public ObjectInputStream getIn(){ return in;}
     public Connection(Peer peer, Peer neighbor, ObjectInputStream in, ObjectOutputStream out, Socket socket, PeerManager peerManager, int pieces) {
         System.out.println("In connection");
+        this.out = out;
+        this.in = in;
         this.peer = peer;
         this.neighbor = neighbor;
         this.downloadRate = new HashMap<Integer, Double>();

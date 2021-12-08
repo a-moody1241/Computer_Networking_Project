@@ -4,7 +4,7 @@ import java.io.*;
 
 public class CommonPeerProperties {
 
-    public static final String CONFIG_FILE = "Common.cfg";
+    public static final String CONFIG_FILE = "src/Common.cfg";
     private static int numberOfPreferredNeighbors;
     private static int unchokingInterval;
     private static int optimisticUnchokingInterval;

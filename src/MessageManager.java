@@ -4,6 +4,7 @@ import Message.Message_PayLoads.BitField_PayLoad;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.PipedInputStream;
 
 public class MessageManager implements Runnable {
@@ -28,8 +29,14 @@ public class MessageManager implements Runnable {
 
     @Override
     public void run() {
-        this.sendHandshake(peerID);
-        this.receiveHandshake();
+        try {
+            this.connection.getOut().writeObject(new handshake(peerID));
+            this.receiveHandshake(this.connection.getIn());
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        //this.sendHandshake(peerID);
+        //this.receiveHandshake();
 
         try {
             BitField_PayLoad bitField_payLoad = new BitField_PayLoad(FileManager.getBitField());
@@ -42,27 +49,15 @@ public class MessageManager implements Runnable {
         }
     }
 
-    private void sendHandshake(int peerID) {
-        byte[] handshakeMsg = handshake.createHandshake(peerID);
-        clientConnection.send(handshakeMsg);
-    }
 
-    private void receiveHandshake() {
-        try {
-            clientConnection.receive(32);
-            byte[] handshakeMsg = new byte[32];
-            in.readFully(handshakeMsg);
+    public static int receiveHandshake(ObjectInputStream is) throws IOException, ClassNotFoundException {
 
-            byte[] headerBytes = new byte[18];
-            System.arraycopy(handshakeMsg, 0, headerBytes, 0, 18);
+        ObjectInputStream ois = new ObjectInputStream(is);
+        handshake receive = (handshake) ois.readObject();
+        System.out.println("receiving handshake from " + receive.getPeerID());
 
-            byte[] peerIDBytes = new byte[4];
-            System.arraycopy(handshakeMsg, 27, peerIDBytes, 0, 4);
+        return receive.getPeerID();
 
-            //logger to receive handshake
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
 

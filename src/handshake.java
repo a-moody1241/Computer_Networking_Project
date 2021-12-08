@@ -6,13 +6,14 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLOutput;
 
-public class handshake {
+public class handshake implements Serializable {
+    private static final long serialVersionUID = -1482860868859618509L;
     private static String header = "P2PFILESHARINGPROJ";
     private static int peerID;
     public handshake(int peerID){
         super();
         this.peerID = peerID;
-        this.header = header;
+        this.header = getHeader();
     }
     public String getHeader(){ return header; }
     public int getPeerID(){
@@ -41,21 +42,15 @@ public class handshake {
         return handshake;
     }
 
-    public static byte[] sendHandshake(ObjectOutputStream os, int peerID) throws IOException {
-        byte[] handshake = createHandshake(peerID);
-        ObjectOutputStream oos = new ObjectOutputStream(os);
-        oos.writeObject(handshake);
-        System.out.println("Sending the handshake to " + peerID);
-        return handshake;
-    }
 
-    public static byte[] receiveHandshake(ObjectInputStream is) throws IOException, ClassNotFoundException {
-        System.out.println("Receiving handshake from ");
-        ObjectInputStream ois = new ObjectInputStream(is);
-        byte[] response = (byte[]) ois.readObject();
-        //String s = new String(response, StandardCharsets.UTF_8);
-        //System.out.println(response.length);
-        return response;
+    public static int receiveHandshake(ObjectInputStream is) throws IOException, ClassNotFoundException {
+
+            ObjectInputStream ois = new ObjectInputStream(is);
+            handshake receive = (handshake) ois.readObject();
+            System.out.println("receiving handshake from " + receive.getPeerID());
+        ois.close();
+        return receive.getPeerID();
+
     }
 
     public static void printHandshake(handshake h){

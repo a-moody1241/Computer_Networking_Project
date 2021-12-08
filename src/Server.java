@@ -11,12 +11,13 @@ public class Server {
 	private final static String fileToSend = "testout"; ///Users/catherinehealy/Documents/GitHub/Computer_Networking_Project/src/peer_1001";//"src/peer_1001/";
 	//added
 
-	private static final int sPort = 8000;   //The server will be listening on this port number
+	private static final int sPort = 8001;   //The server will be listening on this port number
 	public static void main(String[] args) throws Exception {
 
 
 		System.out.println("The server is running.");
         	ServerSocket listener = new ServerSocket(sPort);
+
 		int clientNum = 1;
         	try {
             		while(true) {
@@ -37,6 +38,7 @@ public class Server {
     		private String message;    //message received from the client
 			private String MESSAGE;    //uppercase message send to the client
 			private Socket connection;
+			private ServerSocket listener;
         	private ObjectInputStream in;	//stream read from the socket
         	private ObjectOutputStream out;    //stream write to the socket
 			private int no;		//The index number of the client
@@ -67,18 +69,18 @@ public class Server {
 
  		try{
 
+			//Socket requestSocket = new Socket("localhost", 8001);
 
 			//initialize Input and Output streams
 			out = new ObjectOutputStream(connection.getOutputStream());
 			out.flush();
 
-			//byte[] handshakes = handshake.sendHandshake(out, 1002);
-			//String s = new String(handshakes, StandardCharsets.UTF_8);
-			//System.out.println("Created the handshake: " + s);
-
 			in = new ObjectInputStream(connection.getInputStream());
-			byte[] receivedH = handshake.receiveHandshake(in);
-			System.out.println("Received the handshake" );
+			handshake ins = (handshake) in.readObject();
+
+			//int peerIDv = handshake.receiveHandshake(in);
+			System.out.println("Received the handshake from " + ins.getPeerID() );
+
 
 			try{
 				while(true)

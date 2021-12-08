@@ -9,7 +9,6 @@ import java.util.*;
 
 public class PeerManager extends Thread {
 
-    private Socket socketPort;
     private ServerSocket socket;
     private Peer peer;
     private Peer hostPeer;
@@ -20,21 +19,15 @@ public class PeerManager extends Thread {
     private static ArrayList<Peer> kNeighborPeers;
     private static Peer optimizedUnchokedPeer;
 
-    //public PeerManager(Socket sSocket, Peer hostPeer) {
-      //  super();
-        //this.socketPort = sSocket;
-       // this.hostPeer = hostPeer;
-    //}
 
     public PeerManager(ServerSocket socket, Peer peer){
         super();
         this.socket = socket;
         this.peer = peer;
     }
-    //public void setSocketPort(ServerSocket socketPort) {
-//        this.socketPort = socketPort;
-//    }
 
+
+    public void setSocket(ServerSocket socket){ this.socket = socket;}
     public void addToInterestedPeers(Peer intPeers) {
         interestedPeers.add(intPeers);
     }
@@ -88,7 +81,7 @@ public class PeerManager extends Thread {
                     }
                     Thread.sleep(timeout);
 
-                    while (!socketPort.isClosed()) {
+                    while (!socket.isClosed()) {
                         synchronized (interestedPeers) {
                             System.out.println("Finding k preferred peers");
                             if (interestedPeers.size() != 0) {
@@ -162,7 +155,7 @@ public class PeerManager extends Thread {
                     }
                     Thread.sleep(timeout);
 
-                    while (!socketPort.isClosed()) {
+                    while (!socket.isClosed()) {
                         synchronized (interestedPeers) {
                             System.out.println("Finding Optimistic Peer");
                             Peer p;

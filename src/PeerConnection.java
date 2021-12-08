@@ -15,15 +15,16 @@ public class PeerConnection extends Peer implements Runnable{
 
 
     public PeerConnection(Peer callingPeer) throws IOException {
-        super();
         this.peer = callingPeer;
         new Logger(callingPeer.getPeerID());
-        peerManager = new PeerManager(serverSocket, peer);
+        peerManager = new PeerManager(serverSocket, this.peer);
+
 
     }
 
     public void startConnection(PeerConnection peerConnection){
         Thread t = new Thread(peerConnection);
+        t.setName("peerConnection-" + this.peer.getPeerID());
         t.start();
     }
 
@@ -46,9 +47,15 @@ public class PeerConnection extends Peer implements Runnable{
                                 neighbor = p;
                             }
                         }
-                        //connectionhandler conn = new connectionhandler
-                        //conn.start()
-                        //sending bitfield message
+
+                        Connection connection = new Connection(peer, neighbor, in, out, socket, peerManager, 0);
+                        connection.start();
+                        neighbor.setConnection(connection);
+
+                        //BitFieldPayLoad out_payload = new BitFieldPayLoad(FileManager.getBitField());
+                        //connection.sendMessage(new Message(MessageType.BITFIELD, out_payload));
+                        System.out.println("Sending Bitfield Message from: " + peer.getPeerID() + " to: " + neighbor.getPeerID());
+
                     } catch (IOException e) {
                         e.printStackTrace();
                     } catch (ClassNotFoundException e) {
@@ -60,18 +67,20 @@ public class PeerConnection extends Peer implements Runnable{
     }
 
     public void startSender(){
-        new Thread(){
-            public void run(){
-                while(true) {
+        (new Thread() {
+            @Override
+            public void run() {
+                while (true) {
                     try {
                         for (Peer neighbor : peers) {
-                            if (!neighbor.isPeerUp()) {
+                            if (!neighbor.isPeerUp() && neighbor.getPeerID() < peer.getPeerID()) {
+                                System.out.println("peer connection start sender");
                                 Socket neighborSocket = new Socket(neighbor.getHostName(), neighbor.getPortNumber());
                                 ObjectOutputStream out = new ObjectOutputStream(neighborSocket.getOutputStream());
                                 out.flush();
-                                System.out.println("Handshake sent from peer " + getPeerID() + " to " + neighbor.getPeerID());
+                                System.out.println("Handshake sent from peer " + peer.getPeerID() + " to " + neighbor.getPeerID());
                                 Logger.peerToPeerMakesTCPConnection(neighbor.getPeerID());
-                                out.writeObject(new handshake(getPeerID()));
+                                out.writeObject(new handshake(peer.getPeerID()));
                                 out.flush();
                                 out.reset();
                                 neighbor.setPeerSocket(neighborSocket);
@@ -88,25 +97,27 @@ public class PeerConnection extends Peer implements Runnable{
                     }
                 }
             }
-        }.start();
+        }).start();
     }
 
 
     @Override
     public void run() {
-        System.out.println("Starting peer " + this.peer.getPeerID());
+        System.out.println("Starting peer " + this.peer.getPeerID() + " " + this.peer.getPortNumber());
         try {
             new FileManager(this.peer.getPeerID(), this.peer.getFilePresent());
             //this.setBitfield(filemanager.getbitfield
             serverSocket = new ServerSocket(this.peer.getPortNumber());
-            System.out.println("Server socket created for peer " + this.peer.getPeerID());
+            System.out.println("Server socket created for peer " + this.peer.getHostName() + " " + this.peer.getPortNumber());
 
-        } catch (IOException e) {
+        } catch (Exception e) {
+            System.out.println("error creating the socket");
             e.printStackTrace();
         }
         startServer();
         startSender();
 
+        peerManager.setSocket(serverSocket);
         peerManager.start();
 
 
@@ -114,6 +125,7 @@ public class PeerConnection extends Peer implements Runnable{
         //CHANGE
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             public void run() {
+                System.out.println("in terminate");
                 try {
                     serverSocket.close();
                     for (Peer p : peers) {
